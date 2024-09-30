@@ -23,7 +23,7 @@ export const handleAddToWatchlist = async (auth, movie, selectedCategory, dispat
                 dispatch(addToWatchlist(movie));
             } else {
                 toast.error("Failed to add to watchlist");
-                console.log('Failed to add movie to watchlist');
+                console.log('Failed to add movie to watchlist', response.error);
             }
         } else {
             toast.error("User not authenticated");
@@ -74,6 +74,8 @@ export const fetchWatchlist = async (auth, dispatch, setLoading) => {
         const user = auth.currentUser;
         if (user) {
             const idToken = await user.getIdToken();
+            console.log('idtoken', idToken);
+
             const response = await fetch('https://moviesflix-backend.vercel.app/api/user/watchlist', {
                 method: 'GET',
                 headers: {
@@ -81,6 +83,8 @@ export const fetchWatchlist = async (auth, dispatch, setLoading) => {
                     'Authorization': `Bearer ${idToken}`
                 }
             });
+            console.log('response', response);
+
 
             if (response.ok) {
                 const data = await response.json();
