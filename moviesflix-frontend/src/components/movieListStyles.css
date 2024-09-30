@@ -1,0 +1,186 @@
+.inp {
+    margin: 10px;
+    padding: 10px;
+}
+
+.btn {
+    padding: 12px;
+    margin: 12px;
+    border: 1px solid black;
+    background-color: white;
+}
+
+/* .form {
+    position: absolute;
+    padding: 2em;
+    background: black;
+    opacity: 0.8;
+    width: 600px;
+    margin: 30px auto;
+    right: 0;
+    left: 0;
+} */
+
+/* .container {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50vh;
+    padding: 2em;
+    background: black;
+    opacity: 0.8;
+    width: 600px;
+    margin: auto 0;
+    /* right: 0;  */
+/* left: 30%;  
+    top: 30%; */
+/* }  */
+
+/* .background{
+    background: url("https://assets.nflxext.com/ffe/siteui/vlv3/563192ea-ac0e-4906-a865-ba9899ffafad/6b2842d1-2339-4f08-84f6-148e9fcbe01b/IN-en-20231218-popsignuptwoweeks-perspective_alpha_website_large.jpg");
+    position: absolute;
+} */
+
+form .p-text {
+    color: grey;
+}
+
+form .s-text {
+    color: white;
+}
+
+form .s-text:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.text-dec:hover {
+    text-decoration: underline;
+}
+
+.change-color:hover {
+    transition: 0.5s ease-in-out;
+    background-color: #aa0001;
+}
+
+
+.scroll::-webkit-scrollbar {
+    display: none;
+}
+
+.fade {
+    height: 7.4rem;
+    background-image: linear-gradient(180deg, transparent, rgba(37, 37, 37, 0.61), #111);
+}
+
+.movielist .movieCard {
+    max-width: 230px;
+    width: 230px;
+    height: 100%;
+    cursor: pointer;
+    position: relative;
+}
+
+.movieCard img {
+    border-radius: 0.2rem;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+}
+
+.movieCard .hover {
+    z-index: 1000;
+    width: 20rem;
+    height: max-content;
+    position: absolute;
+    top: -15vh;
+    left: 0;
+    border-radius: 0.3rem;
+    box-shadow: rgba(0, 0, 0, 0.75) 0px 3px 10px;
+    background-color: #181818;
+    transition: 0.3s ease-in-out;
+}
+
+.image-video-container {
+    position: relative;
+    height: 150px;
+}
+
+.image-video-container img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 0.3rem;
+    top: 0;
+    z-index: 4;
+    position: absolute;
+}
+
+.image-video-container iframe {
+    /* width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 0.3rem;
+    top: 0;
+    z-index: 4;
+    position: absolute; */
+}
+
+.info-container {
+    padding: 1rem;
+    gap: 0.5rem;
+}
+
+.icons .controls {
+    display: flex;
+    gap: 1rem;
+}
+
+.icons svg {
+    font-size: 2rem;
+    cursor: pointer;
+    transition: 0.2s ease-in-out;
+}
+
+.icons svg:hover {
+    color: #b8b8b8;
+}
+
+.genres ul {
+    gap: 1rem;
+}
+
+.genres li {
+    padding-right: 0.7rem;
+}
+
+.genres li:first-of-type {
+    list-style-type: none;
+}
+
+.wrapper .slider-action {
+    position: absolute;
+    z-index: 99;
+    height: 100%;
+    top: 0;
+    bottom: 0;
+    width: 50px;
+    transition: 0.3s ease-in-out;
+}
+
+.wrapper .slider-action svg {
+    font-size: 2rem;
+}
+
+.none {
+    display: none;
+}
+
+.left {
+    left: 0;
+}
+
+.right {
+    right: 0;
+}
