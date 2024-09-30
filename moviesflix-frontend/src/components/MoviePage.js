@@ -72,7 +72,7 @@ const MoviePage = () => {
 
                 // fetch videos
                 const videoData = await VideoData(id, type);
-                console.log("videos", videoData);
+                // console.log("videos", videoData);
                 setVideos(videoData)
 
 

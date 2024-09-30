@@ -14,7 +14,7 @@ const MainContainer = memo(() => {
     const getNowPlayingMovies = async () => {
         const data = await fetch('https://api.themoviedb.org/3/movie/now_playing?page=1', API_OPTIONS);
         const result = await data.json();
-        console.log("Now Playing Movies", result?.results);
+        // console.log("Now Playing Movies", result?.results);
         setResult(result);
         setRandomMovieIndex(Math.floor(Math.random() * Math.min(5, result?.results.length)));
         // onMainContainerLoad();
@@ -28,7 +28,7 @@ const MainContainer = memo(() => {
     if (!result || !result?.results || randomMovieIndex === null) return <div className='text-white'>Loading...</div>;
     // do above step or do optional chaining as done below on movies array
     const mainMovie = result?.results[randomMovieIndex];
-    console.log(mainMovie);
+    // console.log(mainMovie);
     return (
         <div className='pt-[30%] bg-black md:pt-0'>
             <VideoTtile title={mainMovie?.title} overview={mainMovie?.overview} movieId={mainMovie?.id} />

@@ -12,11 +12,11 @@ const getTrailerBackground = async (movieId, dispatch) => {
     try {
         const data = await fetch(`https://api.themoviedb.org/3/movie/${movieId}/videos?language=en-US`, API_OPTIONS);
         const result = await data.json();
-        console.log(result.results);
+        // console.log(result.results);
 
         const fiterData = result.results.filter((video) => video.type === "Trailer");
         const trailer = fiterData.length ? fiterData[0] : result?.results[0];
-        console.log(trailer);
+        // console.log(trailer);
 
         // setTrailer(trailer.key);
         dispatch(addTrailerVideo(trailer.key));
@@ -42,11 +42,11 @@ const getMovieVideos = async (movieId, selectedCategory, setTrailerId) => {
 
         const data = await fetch(apiUrl, API_OPTIONS);
         const result = await data.json();
-        console.log(result.results);
+        // console.log(result.results);
 
         const filteredData = result.results.filter((video) => video.type === "Trailer");
         const trailer = filteredData.length ? filteredData[0] : result?.results[0];
-        console.log(trailer);
+        // console.log(trailer);
 
         setTrailerId(trailer.key);
     } catch (error) {

@@ -10,7 +10,7 @@ const useHorrorMovies = () => {
     const getHorrorMovies = async () => {
         const data = await fetch(`https://api.themoviedb.org/3/discover/movie?language=en-US&with_genres=27&page=1&sort_by=vote_count.desc`, API_OPTIONS);
         const result = await data.json();
-        console.log("Horror", result.results);
+        // console.log("Horror", result.results);
         dispatch(addHorrorMovies(result.results));
     }
 

@@ -8,7 +8,7 @@ export const VideoData = async (movieId, category) => {
             throw new Error(`Failed to fetch videos for ${category} ID ${movieId}`);
         }
         const result = await response.json();
-        console.log("videodata", result.results);
+        // console.log("videodata", result.results);
         return result.results;
     } catch (error) {
         console.error("Error fetching cast info:", error);

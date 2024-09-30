@@ -11,7 +11,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowCircleLeft, faArrowCircleRight } from '@fortawesome/free-solid-svg-icons';
 
 const MovieListRedux = memo(({ title, movies, isLargeRow, category, type, userSelected, isAdded, onDelete }) => {
-    console.log("type", type);
+    // console.log("type", type);
     const [categories, setCategories] = useState({
         'Netflix Originals': 'movie',
         'Popular': 'movie',

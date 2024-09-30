@@ -1,4 +1,4 @@
-console.log("authtoken", process.env.REACT_APP_API_OPTIONS_AUTH_TOKEN);
+// console.log("authtoken", process.env.REACT_APP_API_OPTIONS_AUTH_TOKEN);
 
 export const API_OPTIONS = {
   method: 'GET',

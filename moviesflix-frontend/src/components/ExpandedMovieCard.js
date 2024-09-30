@@ -62,7 +62,7 @@ const ExpandedMovieCard = ({ movie, backdropPath, selectedCategory, isMobileView
     };
 
     const handleCardClick = () => {
-        console.log("clicked");
+        // console.log("clicked");
         navigate(`/${movie.id}?type=${selectedCategory}`);
     };
 

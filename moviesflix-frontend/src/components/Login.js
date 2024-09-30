@@ -36,7 +36,7 @@ const Login = () => {
         .then((userCredential) => {
           // Signed up 
           const user = userCredential.user;
-          console.log(user);
+          // console.log(user);
 
           // update user's profile
           updateProfile(user, {
@@ -67,7 +67,7 @@ const Login = () => {
         .then((userCredential) => {
           // Signed in 
           const user = userCredential.user;
-          console.log(user);
+          // console.log(user);
         })
         .catch((error) => {
           console.log('error', error);

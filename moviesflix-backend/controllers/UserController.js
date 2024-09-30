@@ -5,7 +5,7 @@ module.exports.addToWatchListMovies = async (req, res) => {
         const { movieId, data } = req.body;
         const user = await User.findOne({ firebaseUid: req.user.uid });
         if (user) {
-            console.log("user", user);
+            // console.log("user", user);
             const { watchlistMovies } = user;
             const movieAlreadyAdded = watchlistMovies.find(({ id }) => id === data.id);
             if (!movieAlreadyAdded) {

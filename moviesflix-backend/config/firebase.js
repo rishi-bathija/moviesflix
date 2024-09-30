@@ -14,7 +14,7 @@ const serviceAccount = {
     "universe_domain": process.env.FIREBASE_UNIVERSAL_DOMAIN
 }
 
-console.log('privatekey', serviceAccount.private_key);
+// console.log('privatekey', serviceAccount.private_key);
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount)
