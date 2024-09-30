@@ -8,21 +8,20 @@ const UserMovies = () => {
     const dispatch = useDispatch();
     const watchlist = useSelector((state) => state.movies.watchlist);
 
-    // useEffect(() => {
-    //     // Check the authentication state before fetching the watchlist
-    //     const unsubscribe = auth.onAuthStateChanged((user) => {
-    //         if (user) {
-    //             fetchWatchlist(auth, dispatch); // Ensure to pass auth and dispatch
-    //         } else {
-    //             console.error('User not authenticated');
-    //             // If you have a loading state or other actions to handle the unauthenticated state, manage them here
-    //         }
-    //     });
+    useEffect(() => {
+        // Check the authentication state before fetching the watchlist
+        const unsubscribe = auth.onAuthStateChanged((user) => {
+            if (user) {
+                fetchWatchlist(auth, dispatch); // Ensure to pass auth and dispatch
+            } else {
+                console.error('User not authenticated');
+                // If you have a loading state or other actions to handle the unauthenticated state, manage them here
+            }
+        });
 
-    //     // Cleanup the subscription
-    //     return () => unsubscribe();
-    // }, [dispatch]);
-
+        // Cleanup the subscription
+        return () => unsubscribe();
+    }, [dispatch]);
 
 
     // Filter watchlist into movies and TV shows
