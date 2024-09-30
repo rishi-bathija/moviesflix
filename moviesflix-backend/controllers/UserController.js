@@ -29,7 +29,7 @@ module.exports.getWatchListMovies = async (req, res) => {
         if (user) {
             return res.status(200).json({
                 msg: 'success',
-                movies: user.watchlistMovies,
+                movies: user.watchlistMovies || [], // Return an empty array if no movies are found
             })
         }
         else {
