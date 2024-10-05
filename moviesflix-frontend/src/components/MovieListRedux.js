@@ -12,6 +12,8 @@ import { faArrowCircleLeft, faArrowCircleRight } from '@fortawesome/free-solid-s
 
 const MovieListRedux = memo(({ title, movies, isLargeRow, category, type, userSelected, isAdded, onDelete }) => {
     // console.log("type", type);
+    // console.log('movies', movies);
+
     const [categories, setCategories] = useState({
         'Netflix Originals': 'movie',
         'Popular': 'movie',
@@ -72,53 +74,84 @@ const MovieListRedux = memo(({ title, movies, isLargeRow, category, type, userSe
     }, []);
 
     return (
-        <div className='p-6 my-8'>
-            <div className='flex items-center mb-4 justify-between'>
-                <h1 className='text-2xl text-white'>{title}</h1>
+        <div className="p-4 sm:p-6 my-6 sm:my-8">
+            <div className="flex items-center mb-4 justify-between">
+                <h1 className="text-xl sm:text-2xl text-white w-full">{title}</h1>
                 {category && (
-                    <div className='ml-4'>
-                        <label className='text-white'>Category:</label>
+                    <div className="ml-4 flex justify-center items-center">
+                        <label className="text-white">Category:</label>
                         <select
-                            className='ml-2 p-2 bg-red-800 rounded text-white'
+                            className="ml-2 p-2 bg-red-800 rounded text-white"
                             value={categories[title]}
                             onChange={(e) => handleCategoryChange(e.target.value, title)}
                         >
-                            <option value='movie'>Movies</option>
-                            <option value='tv'>TV Shows</option>
+                            <option value="movie">Movies</option>
+                            <option value="tv">TV Shows</option>
                         </select>
                     </div>
                 )}
             </div>
 
-            <div className='flex flex-col gap-4 relative py-8' onMouseEnter={() => setShowControls(true)} onMouseLeave={() => setShowControls(false)}>
-                <div className="wrapper" style={{ position: 'relative' }}>
+            <div
+                className="flex flex-col gap-4 relative py-8"
+                onMouseEnter={() => setShowControls(true)}
+                onMouseLeave={() => setShowControls(false)}
+            >
+                <div className="wrapper relative">
                     {!isMobileView && (
-                        <div className={`slider-action left ${!showControls ? "none" : ""} flex justify-center items-center`} onClick={() => handleDirection("left")}>
+                        <div
+                            className={`slider-action left ${!showControls ? "none" : ""
+                                } flex justify-center items-center`}
+                            onClick={() => handleDirection("left")}
+                        >
                             <FontAwesomeIcon className="text-white" icon={faArrowCircleLeft} />
                         </div>
                     )}
-                    <div className={`flex slider gap-4 transition-transform duration-300 ease-in-out ${isMobileView ? 'mobile-slider' : ''}`} ref={ref} style={{ transform: isMobileView ? 'none' : `translateX(${-sliderPosition * movieWidth}px)` }}>
-                        {movies
-                            ?.map((movie, index) => (
-                                <div key={movie.id} className="movie-wrapper" onMouseEnter={() => setHoveredMovie(movie)} onMouseLeave={() => setHoveredMovie(null)}>
-                                    {!isMobileView && hoveredMovie === movie && isLargeRow ? (
-                                        <ExpandedMovieCard movie={movie} backdropPath={movie.backdrop_path} selectedCategory={type ? type : categories[title]} isMobileView={isMobileView} />
-                                    ) : (
-                                        <MovieCard
-                                            posterPath={isLargeRow ? movie.poster_path : movie.backdrop_path}
-                                            altText={movie.title}
-                                            movie={movie}
-                                            selectedCategory={userSelected ? userSelected : type ? type : (!category ? 'movie' : categories[title])}
-                                            isMobileView={isMobileView}
-                                            isAdded={isAdded}
-                                            onDelete={onDelete}
-                                        />
-                                    )}
-                                </div>
-                            ))}
+                    <div
+                        className={`flex slider gap-4 transition-transform duration-300 ease-in-out ${isMobileView ? "mobile-slider" : ""
+                            }`}
+                        ref={ref}
+                        style={{
+                            transform: isMobileView
+                                ? "none"
+                                : `translateX(${-sliderPosition * movieWidth}px)`,
+                        }}
+                    >
+                        {movies?.map((movie, index) => (
+                            <div
+                                key={movie.id}
+                                className="movie-wrapper w-full sm:w-1/2 lg:w-1/3 xl:w-1/4"
+                                onMouseEnter={() => setHoveredMovie(movie)}
+                                onMouseLeave={() => setHoveredMovie(null)}
+                            >
+                                {!isMobileView && hoveredMovie === movie && isLargeRow ? (
+                                    <ExpandedMovieCard
+                                        movie={movie}
+                                        backdropPath={movie.backdrop_path}
+                                        selectedCategory={type ? type : categories[title]}
+                                        isMobileView={isMobileView}
+                                    />
+                                ) : (
+                                    <MovieCard
+                                        posterPath={isLargeRow ? movie.poster_path : movie.backdrop_path}
+                                        altText={movie.title}
+                                        movie={movie}
+                                        selectedCategory={userSelected ? userSelected : type ? type : (!category ? 'movie' : categories[title])}
+                                        isMobileView={isMobileView}
+                                        isAdded={isAdded}
+                                        onDelete={onDelete}
+                                        mediaType={movie.media_type}
+                                    />
+                                )}
+                            </div>
+                        ))}
                     </div>
                     {!isMobileView && (
-                        <div className={`slider-action right ${!showControls ? "none" : ""} flex justify-center items-center`} onClick={() => handleDirection("right")}>
+                        <div
+                            className={`slider-action right ${!showControls ? "none" : ""
+                                } flex justify-center items-center`}
+                            onClick={() => handleDirection("right")}
+                        >
                             <FontAwesomeIcon className="text-white" icon={faArrowCircleRight} />
                         </div>
                     )}
@@ -126,6 +159,7 @@ const MovieListRedux = memo(({ title, movies, isLargeRow, category, type, userSe
             </div>
         </div>
     );
+
 });
 
 export default MovieListRedux;

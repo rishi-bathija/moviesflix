@@ -74,7 +74,7 @@ export const fetchWatchlist = async (auth, dispatch, setLoading) => {
         const user = auth.currentUser;
         if (user) {
             const idToken = await user.getIdToken();
-            console.log('idtoken', idToken);
+            // console.log('idtoken', idToken);
 
             const response = await fetch('https://moviesflix-backend.vercel.app/api/user/watchlist', {
                 method: 'GET',
@@ -83,11 +83,13 @@ export const fetchWatchlist = async (auth, dispatch, setLoading) => {
                     'Authorization': `Bearer ${idToken}`
                 }
             });
-            console.log('response', response);
+            // console.log('response', response);
 
 
             if (response.ok) {
                 const data = await response.json();
+                console.log('data', data);
+
                 dispatch(setWatchlist(data.movies || []));  // Dispatch the action to store the watchlist
                 console.log('Fetched watchlist:', data.movies);
             } else {

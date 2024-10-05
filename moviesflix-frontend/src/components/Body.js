@@ -15,6 +15,7 @@ import UserMovies from './UserMovies'
 import { fetchWatchlist } from '../utils/watchlistUtils'
 import { auth } from '../utils/firebase'
 import { useDispatch } from 'react-redux'
+import Chat from './Chat'
 
 
 
@@ -68,6 +69,7 @@ const Body = () => {
                         <Route exact path='/:id' element={<MoviePage />} />
                         <Route path="/genre/:genreId/:genreName" element={<GenrePage />} />
                         <Route exact path="/mylist" element={<UserMovies />} />
+                        <Route exact path='/chat' element={<Chat />} />
                     </Routes>
                 </div>
             </Router>

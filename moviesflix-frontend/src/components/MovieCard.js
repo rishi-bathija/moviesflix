@@ -9,8 +9,10 @@ import { addMovieVideo, setIsMovieTrailer, getGenres, addToWatchlist, removeFrom
 import { getCastData } from '../utils/castUtils';
 import { auth } from '../utils/firebase';
 import { handleAddToWatchlist, handleRemoveFromWatchlist } from '../utils/watchlistUtils';
+import './loginStyle.css'
 
-const MovieCard = ({ posterPath, altText, movie, selectedCategory, isMobileView, isAdded }) => {
+const MovieCard = ({ posterPath, altText, movie, selectedCategory, isMobileView, isAdded, mediaType }) => {
+
     const [isLiked, setIsLiked] = useState(isAdded === 'true');
     const [isHovered, setIsHovered] = useState(false);
     const [isImageHovered, setIsImageHovered] = useState(false);
@@ -22,13 +24,16 @@ const MovieCard = ({ posterPath, altText, movie, selectedCategory, isMobileView,
     const watchlist = useSelector((state) => state.movies.watchlist);
     const isInWatchlist = watchlist.some((item) => item.id === movie.id);
 
+    const mediaTypeOrCategory = mediaType || selectedCategory; // Use mediaType if available, otherwise use selectedCategory
+
+
     useEffect(() => {
         const fetchGenres = async () => {
             try {
                 let allGenres = {};
-                const response = await fetch(`https://api.themoviedb.org/3/genre/${selectedCategory}/list?api_key=${API_KEY}`);
+                const response = await fetch(`https://api.themoviedb.org/3/genre/${mediaTypeOrCategory}/list?api_key=${API_KEY}`);
                 if (!response.ok) {
-                    throw new Error(`Failed to fetch genres for ${selectedCategory}`);
+                    throw new Error(`Failed to fetch genres for ${mediaType ? mediaType : selectedCategory}`);
                 }
                 const data = await response.json();
                 const { genres } = data;
@@ -39,20 +44,20 @@ const MovieCard = ({ posterPath, altText, movie, selectedCategory, isMobileView,
             }
         };
         fetchGenres();
-    }, [dispatch, selectedCategory]);
+    }, [dispatch, mediaType, selectedCategory]);
 
     useEffect(() => {
         if (isHovered) {
-            getCastData(movie.id, selectedCategory).then(setCast);
+            getCastData(movie.id, mediaType ? mediaType : selectedCategory).then(setCast);
         }
-    }, [isHovered, selectedCategory, movie.id]);
+    }, [isHovered, mediaType, selectedCategory, movie.id]);
 
     const handleMovieHover = () => {
-        getMovieVideos(movie.id, selectedCategory, setTrailerId);
+        getMovieVideos(movie.id, mediaType ? mediaType : selectedCategory, setTrailerId);
     };
 
     const handlePlayClick = async () => {
-        await getMovieVideos(movie.id, selectedCategory, (trailerId) => {
+        await getMovieVideos(movie.id, mediaType ? mediaType : selectedCategory, (trailerId) => {
             dispatch(addMovieVideo(trailerId));
             dispatch(setIsMovieTrailer(true));
             navigate('/player');
@@ -64,7 +69,7 @@ const MovieCard = ({ posterPath, altText, movie, selectedCategory, isMobileView,
     };
 
     const handleCardClick = () => {
-        navigate(`/${movie.id}?type=${selectedCategory}`);
+        navigate(`/${movie.id}?type=${mediaType ? mediaType : selectedCategory}`);
     };
 
     const handleAddToWatchlistClick = () => {
@@ -81,6 +86,12 @@ const MovieCard = ({ posterPath, altText, movie, selectedCategory, isMobileView,
     const handleGenreClick = (genreId, genreName) => {
         navigate(`/genre/${genreId}/${genreName}?type=${selectedCategory}`);
     };
+
+    if (!posterPath) {
+        return null;
+    }
+
+    // console.log('selectedcategory', selectedCategory);
 
     return (
         <div className={`movieCard`} onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)} onClick={isMobileView ? handleCardClick : undefined}>
@@ -103,7 +114,7 @@ const MovieCard = ({ posterPath, altText, movie, selectedCategory, isMobileView,
                             <FontAwesomeIcon icon={faPlay} title='play' onClick={handlePlayClick} />
                             <FontAwesomeIcon icon={faThumbsUp} title='like' />
                             <FontAwesomeIcon icon={faThumbsDown} title='dislike' />
-                            <Link to={`/${movie.id}?type=${selectedCategory}`}>
+                            <Link to={`/${movie.id}?type=${mediaType ? mediaType : selectedCategory}`}>
                                 <FontAwesomeIcon icon={faCircleInfo} title='More Info' />
                             </Link>
                             {isInWatchlist ? (

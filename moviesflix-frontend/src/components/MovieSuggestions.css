@@ -1,0 +1,12 @@
+.movie-suggestions {
+    /* Add any additional styles here */
+    border: 1px solid #444;
+    /* Example of adding a border */
+    transition: transform 0.3s ease;
+    /* Example transition */
+}
+
+.movie-suggestions:hover {
+    transform: scale(1.02);
+    /* Slightly scale on hover */
+}

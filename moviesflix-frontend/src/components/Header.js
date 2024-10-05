@@ -1,30 +1,25 @@
-import React, { useEffect, useState } from 'react'
-import { onAuthStateChanged, signOut } from "firebase/auth";
-import { auth } from '../utils/firebase';
-import { Link, useNavigate } from 'react-router-dom';
-import './loginStyle.css';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { addUser, removeUser } from '../utils/userSlice';
-import { toggleGptSearch } from '../utils/gptSlice';
-import { lang } from '../utils/constants';
+import { clearGptMovieResult, toggleAiSearch, toggleGptSearch } from '../utils/gptSlice';
 import { changeLanguage } from '../utils/configSlice';
-import logo from './accountlogo-removebg-preview.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHome, faSearch, faCaretDown } from '@fortawesome/free-solid-svg-icons';
+import { Link, useNavigate } from 'react-router-dom';
+import logo from './accountlogo-removebg-preview.png';
+import { auth } from '../utils/firebase';
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import { removeUser, addUser } from '../utils/userSlice';
+import { lang } from '../utils/constants';
 
 const Header = () => {
   const navigate = useNavigate();
-  const user = useSelector(store => store.user);
-
-  const handleSignOut = () => {
-    signOut(auth).then(() => {
-      // Sign-out successful.
-    }).catch((error) => {
-      navigate("/error");
-    });
-  };
-
   const dispatch = useDispatch();
+
+  const user = useSelector(store => store.user);
+  const showGptSearch = useSelector(store => store.gpt.showGptSearch);
+  const showAiSearch = useSelector(store => store.gpt.showAiSearch);
+
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -36,17 +31,51 @@ const Header = () => {
         navigate("/");
       }
     });
-
     return () => unsubscribe();
   }, []);
 
-  const handleGptSearch = () => {
-    dispatch(toggleGptSearch());
+  const handleSignOut = () => {
+    signOut(auth).then(() => {
+      // Sign-out successful.
+    }).catch((error) => {
+      navigate("/error");
+    });
   };
 
-  const showGptSearch = useSelector(store => store.gpt.showGptSearch);
+  const handleGptSearch = () => {
+    dispatch(toggleGptSearch());
+    if (showAiSearch) {
+      dispatch(toggleAiSearch()); // Turn off AI search if it's enabled
+    }
+  };
+
+  const handleHomeClick = () => {
+    // Reset both search states to return to the home page
+    if (showGptSearch || showAiSearch) {
+      dispatch(toggleGptSearch()); // Turn off GPT search
+      if (showAiSearch) {
+        dispatch(toggleAiSearch()); // Turn off AI search
+      }
+    }
+  };
+
+
   const handleLanguageChange = (e) => {
     dispatch(changeLanguage(e.target.value));
+  };
+
+
+  const toggleSearch = (e) => {
+    dispatch(clearGptMovieResult()); // Clear results when toggling
+    if (e.target.value === "AI Search") {
+      dispatch(toggleAiSearch());
+      dispatch(toggleGptSearch()); // Turn off GPT search
+    } else {
+      dispatch(toggleGptSearch());
+      if (showAiSearch) {
+        dispatch(toggleAiSearch()); // Turn off AI search
+      }
+    }
   };
 
   return (
@@ -56,20 +85,32 @@ const Header = () => {
       </Link>
       {user && (
         <div className='flex items-center relative gap-4'>
-          {showGptSearch && (
+          {(showGptSearch || showAiSearch) && (
+            <select className='p-2 bg-red-800 text-white m-2' onChange={toggleSearch}>
+              <option>Normal Search</option>
+              <option>AI Search</option>
+            </select>
+          )}
+          {(showGptSearch || showAiSearch) && (
             <select className='p-2 bg-red-800 text-white m-2' onChange={handleLanguageChange}>
               {lang.map((l) => (
                 <option key={l.identifier} value={l.identifier}>{l.name}</option>
               ))}
             </select>
           )}
-          {showGptSearch ? (
-            <FontAwesomeIcon icon={faHome} onClick={handleGptSearch} className='text-white text-2xl cursor-pointer' />
-          ) : (
-            <FontAwesomeIcon icon={faSearch} onClick={handleGptSearch} className='text-white text-2xl cursor-pointer' />
-          )}
+          {(showGptSearch || showAiSearch) && <FontAwesomeIcon
+            icon={faHome}
+            onClick={handleHomeClick}  // Use the new function here
+            className='text-white text-2xl cursor-pointer'
+          />}
 
-          {!showGptSearch && (
+          {(!showGptSearch && !showAiSearch) && <FontAwesomeIcon
+            icon={faSearch}
+            onClick={handleGptSearch}  // Search icon toggles GptSearch
+            className='text-white text-2xl cursor-pointer'
+          />}
+
+          {(!showGptSearch && !showAiSearch) && (
             <div className="group relative flex items-center cursor-pointer">
               <span className='text-white mr-2 hidden md:block text-2xl'>Hello, {user?.displayName}</span>
               <img className='w-10 h-10 md:w-12 md:h-12 p-1 rounded-full' src={user?.photoURL} alt="user" />

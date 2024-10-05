@@ -88,13 +88,13 @@ const MovieList = ({ title, isLargeRow, fetchUrlMovies, fetchUrlTV, isTrending }
     }, []);
 
     return (
-        <div className='p-6 my-8'>
+        <div className='p-4 sm:p-6 my-6 sm:my-8'>
             <div className='flex items-center mb-4 justify-between'>
-                <h1 className="text-2xl mb-4 text-white">{title}</h1>
+                <h1 className="text-xl sm:text-2xl text-white w-full">{title}</h1>
                 <div className='flex'>
                     {isTrending && (
-                        <div className="ml-4">
-                            <label className="text-white">Time Period:</label>
+                        <div className="ml-4 flex justify-center items-center">
+                            {/* <label className="text-white">Time Period:</label> */}
                             <select
                                 className="ml-2 p-2 rounded bg-red-800 text-white"
                                 onChange={(e) => handleTimePeriodChange(e.target.value)}
@@ -106,8 +106,8 @@ const MovieList = ({ title, isLargeRow, fetchUrlMovies, fetchUrlTV, isTrending }
                         </div>
                     )}
                     {isTrending && (
-                        <div className="ml-4">
-                            <label className="text-white">Category:</label>
+                        <div className="ml-4 flex justify-center items-center">
+                            {/* <label className="text-white">Category:</label> */}
                             <select
                                 className="ml-2 p-2 rounded bg-red-800 text-white"
                                 onChange={(e) => handleTrendingCategoryChange(e.target.value)}
@@ -120,7 +120,7 @@ const MovieList = ({ title, isLargeRow, fetchUrlMovies, fetchUrlTV, isTrending }
                     )}
                 </div>
                 {!isTrending && (
-                    <div className="ml-4">
+                    <div className="ml-4 flex justify-center items-center">
                         <label className="text-white">Category:</label>
                         <select
                             className="ml-2 p-2 rounded bg-red-800 text-white"
@@ -134,22 +134,38 @@ const MovieList = ({ title, isLargeRow, fetchUrlMovies, fetchUrlTV, isTrending }
                 )}
             </div>
             <div className='flex flex-col gap-4 relative py-8' onMouseEnter={() => setShowControls(true)} onMouseLeave={() => setShowControls(false)}>
-                <div className="wrapper" style={{ position: 'relative' }}>
-                    <div className={`slider-action left ${!showControls ? "none" : ""} flex justify-center items-center`} onClick={() => handleDirection("left")}>
-                        {/* left icons */}
-                        <FontAwesomeIcon className="text-white" icon={faArrowCircleLeft} />
-                    </div>
-                    <div className='flex slider gap-4 transition-transform duration-300 ease-in-out movielist' ref={ref} style={{ transform: `translateX(${-sliderPosition * movieWidth}px)` }}>
+                <div className="wrapper relative">
+                    {!isMobileView && (
+                        <div className={`slider-action left ${!showControls ? "none" : ""} flex justify-center items-center`} onClick={() => handleDirection("left")}>
+                            {/* left icons */}
+                            <FontAwesomeIcon className="text-white" icon={faArrowCircleLeft} />
+                        </div>
+                    )}
+                    <div
+                        className={`flex slider gap-4 transition-transform duration-300 ease-in-out ${isMobileView ? "mobile-slider" : ""
+                            }`}
+                        ref={ref}
+                        style={{
+                            transform: isMobileView
+                                ? "none"
+                                : `translateX(${-sliderPosition * movieWidth}px)`,
+                        }}
+                    >
                         <div className='flex gap-4'>
                             {moviesList?.map(movie => (
                                 <MovieCard key={movie.id} posterPath={isLargeRow ? movie.poster_path : movie.backdrop_path} altText={movie.title} movie={movie} isLargeRow={isLargeRow} selectedCategory={isTrending ? selectedTrendingCategory : selectedCategory} isMobileView={isMobileView} />
                             ))}
                         </div>
                     </div>
-                    <div className={`slider-action right ${!showControls ? "none" : ""} flex justify-center items-center`} onClick={() => handleDirection("right")}>
-                        {/* right icons */}
-                        <FontAwesomeIcon className="text-white" icon={faArrowCircleRight} />
-                    </div>
+                    {!isMobileView && (
+                        <div
+                            className={`slider-action right ${!showControls ? "none" : ""
+                                } flex justify-center items-center`}
+                            onClick={() => handleDirection("right")}
+                        >
+                            <FontAwesomeIcon className="text-white" icon={faArrowCircleRight} />
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

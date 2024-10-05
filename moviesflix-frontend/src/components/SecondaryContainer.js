@@ -8,6 +8,7 @@ import MovieListRedux from './MovieListRedux'
 
 const SecondaryContainer = () => {
   const movies = useSelector(store => store.movies);
+
   return (
     <>
       <div className='bg-black'>

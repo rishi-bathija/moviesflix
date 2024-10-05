@@ -12,41 +12,30 @@ import useTopRatedMovies from '../hooks/useTopRatedMovies'
 import useUpcomingMovies from '../hooks/useUpcomingMovies'
 import useHorrorMovies from '../hooks/useHorrorMovies'
 import GptSearch from './GptSearch'
+import Chat from './Chat'
 
 const Browse = () => {
-
   useNowPlayingMovies();
-  // usePopularMovies();
-  // useNetflixOrgMovies();
-  // useTopRatedMovies();
   useUpcomingMovies();
   useHorrorMovies();
 
   const showGptSearch = useSelector(store => store.gpt.showGptSearch);
-  const [mainContainerLoaded, setMainContainerLoaded] = useState(false);
-
-  const handleMainContainerLoad = () => {
-    setMainContainerLoaded(true);
-  };
-
-  // Reset mainContainerLoaded when the component mounts or updates
-  // useEffect(() => {
-  //   setMainContainerLoaded(false);
-  // }, [showGptSearch]); // Re-run effect whenever showGptSearch changes
+  const showAiSearch = useSelector(store => store.gpt.showAiSearch);
 
   return (
-    <div className={`${!showGptSearch && "bg-black"} overflow-x-hidden `}>
+    <div className={`${!showGptSearch && "bg-black"} overflow-x-hidden`}>
       <Header />
-
-      {showGptSearch ? <GptSearch /> :
+      {/* Conditional Rendering */}
+      {showGptSearch && !showAiSearch && <GptSearch />}
+      {!showGptSearch && showAiSearch && <Chat />}
+      {!showGptSearch && !showAiSearch && (
         <div>
           <MainContainer />
-          {<SecondaryContainer />}
+          <SecondaryContainer />
         </div>
-      }
-
+      )}
     </div>
-  )
-}
+  );
+};
 
-export default Browse
+export default Browse;
