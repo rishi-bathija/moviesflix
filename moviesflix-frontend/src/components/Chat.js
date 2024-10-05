@@ -4,11 +4,13 @@ import axios from 'axios'
 import { useDispatch } from 'react-redux';
 import { addGptMovieResult } from '../utils/gptSlice';
 import MovieSuggestions from './MovieSuggestions';
+import Spinner from './Spinner';
 const Chat = () => {
     const [answer, setAnswer] = useState(null);
     const [selectedQuestion, setSelectedQuestion] = useState(""); // Store the predefined question part
     const [userInput, setUserInput] = useState(""); // Store the additional user input
     // const [countryInput, setCountryInput] = useState(""); // Store the user-specified country
+    const [isLoading, setIsLoading] = useState(false);
     const dispatch = useDispatch();
 
     const predefinedQuestions = [
@@ -36,6 +38,7 @@ const Chat = () => {
     }
 
     const generateResponse = async () => {
+        setIsLoading(true);
         setAnswer("Loading...");
         try {
             const user = auth.currentUser;
@@ -85,65 +88,67 @@ const Chat = () => {
         } catch (error) {
             setAnswer("Something went wrong. Please try again.");
             console.error("Error fetching response: ", error);
+        } finally {
+            setIsLoading(false);  // Stop loading after the API call finishes
         }
     };
 
     // console.log('answer', answer);
 
     return (
-        <div className="min-h-screen relative flex flex-col items-center justify-center p-6 w-full overflow-x-hidden mt-20">
-            {/* <div className="fixed inset-0 -z-10">
-                <img
-                    src="https://assets.nflxext.com/ffe/siteui/vlv3/563192ea-ac0e-4906-a865-ba9899ffafad/6b2842d1-2339-4f08-84f6-148e9fcbe01b/IN-en-20231218-popsignuptwoweeks-perspective_alpha_website_large.jpg"
-                    alt="background"
-                    className="h-full w-full object-cover"
-                />
-            </div> */}
-            <h1 className="text-3xl md:text-4xl text-red-600 font-bold mb-4 md:mb-8">MoviesFlix Chatbot</h1>
-            <div className="searchbar flex justify-center flex-col sm:flex-row w-full sm:w-3/4 mx-auto space-y-4 sm:space-y-0 sm:space-x-4">
-                <div className="bg-gray-800 rounded-lg shadow-lg p-4 sm:p-6 space-y-2 sm:space-y-4 w-full">
-                    <div className="space-y-2">
-                        {predefinedQuestions.map((questionPart, index) => (
-                            <button
-                                key={index}
-                                className="w-full px-2 sm:px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm sm:text-lg rounded-lg transition duration-300 ease-in-out"
-                                onClick={() => handleQuestionSelect(questionPart)}
-                            >
-                                {questionPart}
-                            </button>
-                        ))}
-                    </div>
+        <div className="min-h-screen relative flex flex-col items-center justify-center p-6 w-full overflow-x-hidden mt-10">
+            <h1 className="text-3xl md:text-4xl text-gray-300 font-bold mb-4 md:mb-8 mt-10">MoviesFlix Chatbot</h1>
 
-                    <div className="relative">
-                        {selectedQuestion && (
-                            <div className="absolute top-2 left-4 text-gray-300 pointer-events-none text-sm sm:text-base">
-                                {selectedQuestion}
-                            </div>
-                        )}
-                        <input
-                            type="text"
-                            className="w-full px-4 py-2 text-sm sm:text-lg rounded-lg bg-red-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500"
-                            placeholder="Complete your question here..."
-                            value={userInput}
-                            onChange={(e) => setUserInput(e.target.value)}
+            {/* Added description here */}
+            <p className="text-center text-gray-300 mb-4 md:mb-8 w-full md:w-4/5">
+                I am the MoviesFlix Chatbot 🤖. You can ask me any of the questions below, and I will provide the best possible movie/TV show recommendations.
+                First, select a question, then complete it by adding your query inside the search box.
+            </p>
+
+            {isLoading ? (<Spinner />) : (
+                <div className="searchbar flex justify-center flex-col sm:flex-row w-full sm:w-3/4 mx-auto space-y-4 sm:space-y-0 sm:space-x-4">
+                    <div className="bg-gray-800 rounded-lg shadow-lg p-4 sm:p-6 space-y-2 sm:space-y-4 w-full">
+                        <div className="space-y-2">
+                            {predefinedQuestions.map((questionPart, index) => (
+                                <button
+                                    key={index}
+                                    className="w-full px-2 sm:px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm sm:text-lg rounded-lg transition duration-300 ease-in-out"
+                                    onClick={() => handleQuestionSelect(questionPart)}
+                                >
+                                    {questionPart}
+                                </button>
+                            ))}
+                        </div>
+
+                        <div className="relative">
+                            {selectedQuestion && (
+                                <div className="absolute top-2 left-4 text-gray-300 pointer-events-none text-sm sm:text-base">
+                                    {selectedQuestion}
+                                </div>
+                            )}
+                            <input
+                                type="text"
+                                className="w-full px-4 py-2 text-sm sm:text-lg rounded-lg bg-red-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500"
+                                placeholder="Complete your question here..."
+                                value={userInput}
+                                onChange={(e) => setUserInput(e.target.value)}
+                                disabled={!selectedQuestion}
+                                style={{ paddingLeft: selectedQuestion ? `${selectedQuestion.length + 1}ch` : '1rem' }}
+                                title={!selectedQuestion && 'Please select a question first'}
+                            />
+                        </div>
+
+                        <button
+                            className="w-full px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm sm:text-lg rounded-lg transition duration-300 ease-in-out"
+                            onClick={generateResponse}
                             disabled={!selectedQuestion}
-                            style={{ paddingLeft: selectedQuestion ? `${selectedQuestion.length + 1}ch` : '1rem' }}
-                            title={!selectedQuestion && 'Please select a question first'}
-                        />
+                        >
+                            Generate Answer
+                        </button>
                     </div>
-
-                    <button
-                        className="w-full px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm sm:text-lg rounded-lg transition duration-300 ease-in-out"
-                        onClick={generateResponse}
-                        disabled={!selectedQuestion}
-                    >
-                        Generate Answer
-                    </button>
                 </div>
-            </div>
-
-            {/* Display the response */}
-            <MovieSuggestions />
+            )}
+            {!isLoading && answer && <MovieSuggestions />}
         </div>
     );
 

@@ -80,11 +80,17 @@ const Header = () => {
 
   return (
     <div className='absolute w-screen px-8 py-2 bg-gradient-to-b from-black z-10 flex flex-row justify-between items-center '>
-      <Link to={"/"}>
-        <img className="pl-0 md:pl-5 w-36 md:w-48 cursor-pointer bg-none my-2 -ml-4 md:ml-0" src={logo} alt="logo" />
-      </Link>
+      {(!showGptSearch && !showAiSearch) && (
+        <Link to={"/"}>
+          <img
+            className="pl-0 md:pl-5 w-40 md:w-48 max-w-full cursor-pointer bg-none my-2 -ml-4 md:ml-0"
+            src={logo}
+            alt="logo"
+          />
+        </Link>
+      )}
       {user && (
-        <div className='flex items-center relative gap-4'>
+        <div className='flex items-center absolute gap-4 right-5 top-5'>
           {(showGptSearch || showAiSearch) && (
             <select className='p-2 bg-red-800 text-white m-2' onChange={toggleSearch}>
               <option>Normal Search</option>
