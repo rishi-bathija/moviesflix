@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
 import { auth } from '../utils/firebase';
 import axios from 'axios'
-import { useDispatch } from 'react-redux';
-import { addGptMovieResult } from '../utils/gptSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { addGptMovieResult, setGptMovieResult, setIsLoading, setLoading } from '../utils/searchSlice';
 import MovieSuggestions from './MovieSuggestions';
 import Spinner from './Spinner';
 const Chat = () => {
-    const [answer, setAnswer] = useState(null);
+    // const [answer, setAnswer] = useState(null);
     const [selectedQuestion, setSelectedQuestion] = useState(""); // Store the predefined question part
     const [userInput, setUserInput] = useState(""); // Store the additional user input
     // const [countryInput, setCountryInput] = useState(""); // Store the user-specified country
-    const [isLoading, setIsLoading] = useState(false);
+    // const [isLoading, setIsLoading] = useState(false);
     const dispatch = useDispatch();
-
+    const { answer, isLoading } = useSelector((state) => state.gpt);
     const predefinedQuestions = [
         "Suggest me some",
         "Movies and tv shows similar to",
@@ -38,8 +38,8 @@ const Chat = () => {
     }
 
     const generateResponse = async () => {
-        setIsLoading(true);
-        setAnswer("Loading...");
+        dispatch(setIsLoading(true));
+        dispatch(setGptMovieResult("Loading..."));
         try {
             const user = auth.currentUser;
             if (user) {
@@ -78,18 +78,20 @@ const Chat = () => {
 
                 const searchResults = await Promise.all(individResp);
 
-                // console.log('searchRes', searchResults);
+                console.log('searchRes', searchResults);
 
                 dispatch(addGptMovieResult({ movieNames: movieList, gptResults: searchResults }));
 
-                // Update the answer after the search results have been processed
-                setAnswer(movieList); // or however you want to display the movie list
+                dispatch(setGptMovieResult(movieList));
+                console.log('answer', answer);
+
+
             }
         } catch (error) {
-            setAnswer("Something went wrong. Please try again.");
-            console.error("Error fetching response: ", error);
+            dispatch(setGptMovieResult("Something went wrong. Please try again."));
+            console.log("Error fetching response: ", error);
         } finally {
-            setIsLoading(false);  // Stop loading after the API call finishes
+            dispatch(setIsLoading(false))  // Stop loading after the API call finishes
         }
     };
 

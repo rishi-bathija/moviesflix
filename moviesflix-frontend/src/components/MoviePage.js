@@ -33,6 +33,7 @@ const MoviePage = () => {
     const [episodes, setEpisodes] = useState({});
     const [activeTab, setActiveTab] = useState('details');
     const [activeSeason, setActiveSeason] = useState(1);
+    const [watchProviders, setWatchProviders] = useState([]);
     const location = useLocation();
     const watchlist = useSelector((state) => state.movies.watchlist);
     const type = new URLSearchParams(location.search).get('type') || 'movie';
@@ -83,8 +84,15 @@ const MoviePage = () => {
                 setRelatedMovies(relatedResponse.data.results);
 
                 const similarResponse = await axios.get(`https://api.themoviedb.org/3/${type}/${id}/similar?api_key=${API_KEY}`)
-                setSimilarMovies(similarResponse.data.results)
+                setSimilarMovies(similarResponse.data.results);
+
+                const fetchWatchProviders = await axios.get(`https://api.themoviedb.org/3/${type}/${id}/watch/providers?api_key=${API_KEY}`)
+                if (fetchWatchProviders.data.results && fetchWatchProviders.data.results.IN) {
+                    setWatchProviders(fetchWatchProviders.data.results.IN.flatrate || []);
+                }
             } catch (error) {
+                console.log('error', error);
+
                 setError('Failed to fetch movie details.');
             } finally {
                 setLoading(false);
@@ -95,6 +103,7 @@ const MoviePage = () => {
     }, [id, type]);
 
 
+    console.log('watchproviders', watchProviders);
 
 
     const fetchEpisodes = async (seasons) => {
@@ -213,6 +222,23 @@ const MoviePage = () => {
                                 {type === 'movie' ? (<p className="text-gray-400 mb-2 md:mb-4"><strong>Runtime:</strong> {formatRuntime(movieDetails.runtime)}</p>) : (<p className="text-gray-400 mb-2 md:mb-4"><strong>No. of seasons:</strong> {movieDetails.number_of_seasons} </p>)}
 
                                 <p className="text-gray-400 mb-2 md:mb-4"><strong>Status:</strong> {movieDetails?.status}</p>
+                            </div>
+
+                            <div className='flex gap-2 flex-wrap items-center'>
+                                <p className='text-gray-400 mb-2 md:mb-4'><strong>Where can i watch?(in India):-</strong></p>
+                                <div className='flex gap-2'>
+                                    {watchProviders.length > 0 ? (
+                                        watchProviders.map((provider, index) => (
+                                            <div className='provider' key={index}>
+                                                <img src={`https://image.tmdb.org/t/p/original${provider.logo_path}`}
+                                                    alt={provider.provider_name}
+                                                    className='w-[60px] h-[60px] object-cover rounded-full' title={provider.provider_name} />
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <p className='text-gray-400 mb-2 md:mb-4'>No providers available</p>
+                                    )}
+                                </div>
                             </div>
 
                             <div className="buttons mt-4 flex flex-wrap gap-4">

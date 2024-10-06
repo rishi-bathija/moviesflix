@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { clearGptMovieResult, toggleAiSearch, toggleGptSearch } from '../utils/gptSlice';
+import { clearGptMovieResult, toggleAiSearch, toggleGptSearch } from '../utils/searchSlice';
 import { changeLanguage } from '../utils/configSlice';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHome, faSearch, faCaretDown } from '@fortawesome/free-solid-svg-icons';
