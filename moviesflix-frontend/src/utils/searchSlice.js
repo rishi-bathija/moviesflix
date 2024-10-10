@@ -32,7 +32,7 @@ const gptSlice = createSlice({
             state.answer = action.payload;
         },
         setIsLoading: (state, action) => {
-            state.isLoading = action.payload.isLoading;
+            state.isLoading = action.payload;
         },
         setSearchResults: (state, action) => {
             state.results = action.payload;

@@ -72,6 +72,8 @@ export const handleRemoveFromWatchlist = async (auth, movie, dispatch) => {
 export const fetchWatchlist = async (auth, dispatch, setLoading) => {
     try {
         const user = auth.currentUser;
+        // console.log('curruser', user);
+
         if (user) {
             const idToken = await user.getIdToken();
             // console.log('idtoken', idToken);
@@ -88,10 +90,10 @@ export const fetchWatchlist = async (auth, dispatch, setLoading) => {
 
             if (response.ok) {
                 const data = await response.json();
-                console.log('data', data);
+                // console.log('data', data);
 
                 dispatch(setWatchlist(data.movies || []));  // Dispatch the action to store the watchlist
-                console.log('Fetched watchlist:', data.movies);
+                // console.log('Fetched watchlist:', data.movies);
             } else {
                 toast.error("Failed to fetch watchlist");
                 console.error('Failed to fetch watchlist, status:', response.status);

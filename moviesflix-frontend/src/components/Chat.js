@@ -40,10 +40,12 @@ const Chat = () => {
     const generateResponse = async () => {
         dispatch(setIsLoading(true));
         dispatch(setGptMovieResult("Loading..."));
+
         try {
             const user = auth.currentUser;
             if (user) {
                 const idToken = await user.getIdToken();
+                // console.log('idtoken', idToken);
 
                 // Combine the predefined question with the user's input
                 const finalQuestion = selectedQuestion + " " + userInput;
@@ -78,12 +80,12 @@ const Chat = () => {
 
                 const searchResults = await Promise.all(individResp);
 
-                console.log('searchRes', searchResults);
+                // console.log('searchRes', searchResults);
 
                 dispatch(addGptMovieResult({ movieNames: movieList, gptResults: searchResults }));
 
                 dispatch(setGptMovieResult(movieList));
-                console.log('answer', answer);
+                // console.log('answer', answer);
 
 
             }
@@ -92,6 +94,7 @@ const Chat = () => {
             console.log("Error fetching response: ", error);
         } finally {
             dispatch(setIsLoading(false))  // Stop loading after the API call finishes
+
         }
     };
 

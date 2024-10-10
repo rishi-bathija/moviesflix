@@ -16,6 +16,19 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false); // State for password visibility
   const dispatch = useDispatch();
 
+  const errorMessages = {
+    'auth/invalid-email': 'The email address is badly formatted.',
+    'auth/user-disabled': 'This user has been disabled.',
+    'auth/user-not-found': 'No user found with this email.',
+    'auth/wrong-password': 'The password is incorrect.',
+    'auth/email-already-in-use': 'This email is already registered.',
+    'auth/weak-password': 'Password should be at least 6 characters long.',
+    'auth/too-many-requests': 'Too many requests. Please try again later.',
+    'auth/invalid-credential': 'Invalid credentials. Please enter a valid email and password',
+    'auth/network-request-failed': 'Weak internet connection. Check your internet coneection and try again'
+    // Add more as needed
+  };
+
   const email = useRef(null);
   const password = useRef(null);
   const name = useRef(null);
@@ -51,14 +64,12 @@ const Login = () => {
             // ...
           }).catch((error) => {
             // An error occurred
-            setErrorMsg(error.message);
+            setErrorMsg(errorMessages[error.code] || 'An error occurred while updating profile');
           });
 
         })
         .catch((error) => {
-          const errorCode = error.code;
-          const errorMessage = error.message;
-          setErrorMsg(errorCode + "-" + errorMessage)
+          setErrorMsg(errorMessages[error.code] || 'An error occurred during sign-up');
         });
     }
     //signin
@@ -70,12 +81,7 @@ const Login = () => {
           // console.log(user);
         })
         .catch((error) => {
-          console.log('error', error);
-
-          const errorCode = error.code;
-
-          const errorMessage = error.message;
-          setErrorMsg(errorCode + " : " + errorMessage)
+          setErrorMsg(errorMessages[error.code] || 'An error occurred during sign-in');
         });
 
     }
