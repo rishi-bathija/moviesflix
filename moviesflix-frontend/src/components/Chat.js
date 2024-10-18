@@ -100,6 +100,12 @@ const Chat = () => {
 
     // console.log('answer', answer);
 
+    // Handle Enter key press for triggering the search
+    const handleKeyPress = (e) => {
+        if (e.key === 'Enter' && selectedQuestion) {
+            generateResponse();
+        }
+    };
     return (
         <div className="min-h-screen relative flex flex-col items-center justify-center p-6 w-full overflow-x-hidden mt-10">
             <h1 className="text-3xl md:text-4xl text-gray-300 font-bold mb-4 md:mb-8 mt-10">MoviesFlix Chatbot</h1>
@@ -137,6 +143,7 @@ const Chat = () => {
                                 placeholder="Complete your question here..."
                                 value={userInput}
                                 onChange={(e) => setUserInput(e.target.value)}
+                                onKeyDown={handleKeyPress}
                                 disabled={!selectedQuestion}
                                 style={{ paddingLeft: selectedQuestion ? `${selectedQuestion.length + 1}ch` : '1rem' }}
                                 title={!selectedQuestion && 'Please select a question first'}

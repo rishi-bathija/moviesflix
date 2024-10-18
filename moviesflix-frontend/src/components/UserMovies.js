@@ -30,8 +30,11 @@ const UserMovies = () => {
 
 
     // Filter watchlist into movies and TV shows
-    const movies = watchlist.filter(item => item.selectedCategory === 'movie');
-    const tvShows = watchlist.filter(item => item.selectedCategory === 'tv');
+    const movies = watchlist.filter(item => (item.media_type ? item.media_type : item.selectedCategory) === 'movie');
+    const tvShows = watchlist.filter(item => (item.media_type ? item.media_type : item.selectedCategory) === 'tv');
+    // console.log('movie', movies);
+    // console.log('tv', tvShows);
+
 
     return (
         <div className='bg-black text-white h-screen w-screen overflow-x-hidden'>

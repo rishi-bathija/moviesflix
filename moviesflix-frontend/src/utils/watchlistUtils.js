@@ -4,6 +4,7 @@ import { addToWatchlist, removeFromWatchlist, setWatchlist } from "./movieSlice"
 
 
 export const handleAddToWatchlist = async (auth, movie, selectedCategory, dispatch) => {
+    const loadingToastId = toast.loading("Adding to watchlist...");
     try {
         const user = auth.currentUser;
         if (user) {
@@ -33,10 +34,12 @@ export const handleAddToWatchlist = async (auth, movie, selectedCategory, dispat
         toast.error("Something went wrong");
         console.error('Error adding movie to watchlist:', error);
     }
+    toast.dismiss(loadingToastId);
 };
 
 
 export const handleRemoveFromWatchlist = async (auth, movie, dispatch) => {
+    const loadingToastId = toast.loading("Removing from watchlist...");
     try {
         const user = auth.currentUser;
         if (user) {
@@ -67,6 +70,7 @@ export const handleRemoveFromWatchlist = async (auth, movie, dispatch) => {
         toast.error("Something went wrong");
         console.error('Error deleting movie:', error);
     }
+    toast.dismiss(loadingToastId);
 };
 
 export const fetchWatchlist = async (auth, dispatch, setLoading) => {
