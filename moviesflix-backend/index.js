@@ -11,7 +11,7 @@ dbConnect();
 app.use(express.json());
 
 app.use(cors({
-    origin: ["http://localhost:3000", "https://moviesflix-frontend.vercel.app"],
+    origin: ["http://localhost:3000", "https://moviesflix-ui.vercel.app"],
     methods: ["POST", "GET", "PUT", "OPTIONS"],
     credentials: true
 }));
