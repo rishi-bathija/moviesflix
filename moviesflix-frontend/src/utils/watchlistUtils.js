@@ -9,7 +9,7 @@ export const handleAddToWatchlist = async (auth, movie, selectedCategory, dispat
         const user = auth.currentUser;
         if (user) {
             const idToken = await user.getIdToken();
-            const response = await fetch('https://moviesflix-backend.vercel.app/api/user/add', {
+            const response = await fetch('https://moviesflix-xi.vercel.app/api/user/add', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -44,7 +44,7 @@ export const handleRemoveFromWatchlist = async (auth, movie, dispatch) => {
         const user = auth.currentUser;
         if (user) {
             const idToken = await user.getIdToken();
-            const response = await fetch('https://moviesflix-backend.vercel.app/api/user/remove', {
+            const response = await fetch('https://moviesflix-xi.vercel.app/api/user/remove', {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -82,7 +82,7 @@ export const fetchWatchlist = async (auth, dispatch, setLoading) => {
             const idToken = await user.getIdToken();
             // console.log('idtoken', idToken);
 
-            const response = await fetch('https://moviesflix-backend.vercel.app/api/user/watchlist', {
+            const response = await fetch('https://moviesflix-xi.vercel.app/api/user/watchlist', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',

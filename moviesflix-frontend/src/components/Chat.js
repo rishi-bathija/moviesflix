@@ -54,7 +54,7 @@ const Chat = () => {
                 // Prepare the request body
                 const requestBody = JSON.stringify({ question: finalQuestion });
 
-                const response = await fetch("https://moviesflix-backend.vercel.app/api/user/generate-chat-response", {
+                const response = await fetch("https://moviesflix-xi.vercel.app/api/user/generate-chat-response", {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
