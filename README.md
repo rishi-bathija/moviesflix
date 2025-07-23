@@ -3,7 +3,7 @@
 MoviesFlix is a Netflix-style movie and tv show discovery platform built using React, Redux, Firebase, TMDB, with advanced AI-powered search functionality, using Gemini API.
 
 ## 🚀 Live Demo
-[🔗 Live Site](https://moviesflix-ui.vercel.app/)
+[🔗 Live Site](https://moviesflix-ui.vercel.app/) | 📸 [Watch Demo Video Here](https://drive.google.com/file/d/1o9Oi1UmnLZnHfaCddEt_kv8g3_XpdaMI/view?usp=drive_link) 
 
 ## 📂 Features
 
@@ -19,8 +19,6 @@ MoviesFlix is a Netflix-style movie and tv show discovery platform built using R
 - **APIs:** TMDB API, Gemini API
 - **Auth:** Firebase
 
-## 📸 Demo Video
-📸 [Watch Demo Video Here](https://drive.google.com/file/d/1o9Oi1UmnLZnHfaCddEt_kv8g3_XpdaMI/view?usp=drive_link) 
 
 ## 👨‍💻 Author
 **Rishi Bhatija**  
