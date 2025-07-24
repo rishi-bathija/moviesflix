@@ -24,4 +24,4 @@ MoviesFlix is a Netflix-style movie and tv show discovery platform built using R
 **Rishi Bhatija**  
 📧 [bathijarishi@gmail.com](mailto:bathijarishi@gmail.com)  
 🌐 [Portfolio](https://portfolio-rishi1.vercel.app/)  
-🔗 [LinkedIn](https://www.linkedin.com/in/rishi-bhatija-969982279/)
+🔗 [LinkedIn](https://www.linkedin.com/in/rishi-bathija-969982279/)
