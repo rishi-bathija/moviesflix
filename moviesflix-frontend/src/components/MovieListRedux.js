@@ -9,6 +9,7 @@ import useNowPlayingMovies from '../hooks/useNowPlayingMovies';
 import ExpandedMovieCard from './ExpandedMovieCard';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowCircleLeft, faArrowCircleRight } from '@fortawesome/free-solid-svg-icons';
+import MovieListSkeleton from './MovieListSkeleton';
 
 const MovieListRedux = memo(({ title, movies, isLargeRow, category, type, userSelected, isAdded, onDelete }) => {
     // console.log("type", type);
@@ -38,10 +39,10 @@ const MovieListRedux = memo(({ title, movies, isLargeRow, category, type, userSe
         }));
     };
 
-    useNetflixOrgMovies(categories['Netflix Originals']);
-    usePopularMovies(categories['Popular']);
-    useTopRatedMovies(categories['Top Rated']);
-    useNowPlayingMovies(categories['Now Playing']);
+    useNetflixOrgMovies(title, 'Netflix Originals', categories['Netflix Originals']);
+    usePopularMovies(title, 'Popular', categories['Popular']);
+    useTopRatedMovies(title, 'Top Rated', categories['Top Rated']);
+    useNowPlayingMovies(title, 'Now Playing', categories['Now Playing']);
 
     const handleDirection = (direction) => {
         setSliderPosition((prevPosition) => {
@@ -73,6 +74,10 @@ const MovieListRedux = memo(({ title, movies, isLargeRow, category, type, userSe
         };
     }, []);
 
+    if(!movies || movies.length === 0) {
+        return <MovieListSkeleton title={title} isLargeRow={isLargeRow} />;
+    }
+    
     return (
         <div className="p-4 sm:p-6 my-6 sm:my-8">
             <div className="flex items-center mb-4 justify-between">

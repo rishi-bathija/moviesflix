@@ -2,19 +2,22 @@ import { useDispatch } from "react-redux";
 import { addPopularMovies } from "../utils/movieSlice";
 import { useEffect } from "react";
 import { API_OPTIONS } from "../utils/constants";
+import { buildTMDBUrl, fetchThroughProxy } from "../utils/tmdbProxy";
 
-const usePopularMovies = (selectedCategory) => {
+const usePopularMovies = (listTitle, myTitle,selectedCategory) => {
     const dispatch = useDispatch();
 
     const getPopularMovies = async () => {
-        const data = await fetch(`https://api.themoviedb.org/3/${selectedCategory}/popular?page=1`, API_OPTIONS);
-        const result = await data.json();
-        dispatch(addPopularMovies(result.results));
+        const url = buildTMDBUrl(`/${selectedCategory}/popular`, { page: 1 });
+        const data = await fetchThroughProxy(url);
+        const json = await data.json();
+        dispatch(addPopularMovies(json.results));
     };
 
     useEffect(() => {
+        if (listTitle !== myTitle) return;
         getPopularMovies();
-    }, [selectedCategory]);
+    }, [selectedCategory, listTitle, myTitle]);
 
     // return { selectedCategory };
 };

@@ -14,8 +14,7 @@ import { getCastData } from '../utils/castUtils';
 import { VideoData } from '../utils/videoUtils';
 import { auth } from '../utils/firebase';
 import { handleAddToWatchlist, handleRemoveFromWatchlist } from '../utils/watchlistUtils';
-
-
+import { buildTMDBUrl, fetchThroughProxy } from '../utils/tmdbProxy';
 
 
 const MoviePage = () => {
@@ -43,21 +42,22 @@ const MoviePage = () => {
     useEffect(() => {
         const fetchMovieDetails = async () => {
             try {
-                const response = await axios.get(
-                    `https://api.themoviedb.org/3/${type}/${id}?api_key=${API_KEY}`
-                );
-                setMovieDetails(response.data);
+                      // Fetch movie details
+            const movieUrl = buildTMDBUrl(`/${type}/${id}`);
+            const movieResponse = await fetchThroughProxy(movieUrl);
+            const movieData = await movieResponse.json();
+            setMovieDetails(movieData);
                 // Fetch season details if type is tv
                 if (type === 'tv') {
-                    const seasons = response.data.seasons.filter(season => season.season_number !== 0);
+                    const seasons = movieData.seasons.filter(season => season.season_number !== 0);
                     setSeasons(seasons);
                     fetchEpisodes(seasons);
                 }
                 // Fetch crew data
-                const creditsResponse = await axios.get(
-                    `https://api.themoviedb.org/3/${type}/${id}/credits?api_key=${API_KEY}`
-                );
-                const crew = creditsResponse.data.crew;
+                const creditsUrl = buildTMDBUrl(`/${type}/${id}/credits`);
+                const creditsResponse = await fetchThroughProxy(creditsUrl);
+                const creditsData = await creditsResponse.json();
+                const crew = creditsData.crew;
 
                 // Extract directors, producers, and writers
                 const directors = crew.filter(member => member.job === 'Director');
@@ -78,17 +78,21 @@ const MoviePage = () => {
 
 
                 // Fetch related movies
-                const relatedResponse = await axios.get(
-                    `https://api.themoviedb.org/3/${type}/${id}/recommendations?api_key=${API_KEY}`
-                );
-                setRelatedMovies(relatedResponse.data.results);
+                const relatedUrl = buildTMDBUrl(`/${type}/${id}/recommendations`);
+                const relatedResponse = await fetchThroughProxy(relatedUrl);
+                const relatedData = await relatedResponse.json();
+                setRelatedMovies(relatedData.results);
 
-                const similarResponse = await axios.get(`https://api.themoviedb.org/3/${type}/${id}/similar?api_key=${API_KEY}`)
-                setSimilarMovies(similarResponse.data.results);
+                const similarUrl = buildTMDBUrl(`/${type}/${id}/similar`);
+                const similarResponse = await fetchThroughProxy(similarUrl);
+                const similarData = await similarResponse.json();
+                setSimilarMovies(similarData.results);
 
-                const fetchWatchProviders = await axios.get(`https://api.themoviedb.org/3/${type}/${id}/watch/providers?api_key=${API_KEY}`)
-                if (fetchWatchProviders.data.results && fetchWatchProviders.data.results.IN) {
-                    setWatchProviders(fetchWatchProviders.data.results.IN.flatrate || []);
+                const fetchWatchProvidersUrl = buildTMDBUrl(`/${type}/${id}/watch/providers`);
+                const fetchWatchProvidersResponse = await fetchThroughProxy(fetchWatchProvidersUrl);
+                const fetchWatchProvidersData = await fetchWatchProvidersResponse.json();
+                if (fetchWatchProvidersData.results && fetchWatchProvidersData.results.IN) {
+                    setWatchProviders(fetchWatchProvidersData.results.IN.flatrate || []);
                 }
             } catch (error) {
                 console.log('error', error);
@@ -110,8 +114,10 @@ const MoviePage = () => {
         const episodesData = {};
         for (const season of seasons) {
             const seasonNumber = season.season_number;
-            const response = await axios.get(`https://api.themoviedb.org/3/tv/${id}/season/${seasonNumber}?api_key=${API_KEY}`);
-            episodesData[seasonNumber] = response.data.episodes;
+            const seasonUrl = buildTMDBUrl(`/tv/${id}/season/${seasonNumber}`);
+            const seasonResponse = await fetchThroughProxy(seasonUrl);
+            const seasonData = await seasonResponse.json();
+            episodesData[seasonNumber] = seasonData.episodes;
         }
         setEpisodes(episodesData);
     }

@@ -6,11 +6,12 @@ import { addTrailerVideo } from '../utils/movieSlice';
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 import ReactPlayer from 'react-player/youtube';
-
+import { buildTMDBUrl, fetchThroughProxy } from '../utils/tmdbProxy';
 
 const getTrailerBackground = async (movieId, dispatch) => {
     try {
-        const data = await fetch(`https://api.themoviedb.org/3/movie/${movieId}/videos?language=en-US`, API_OPTIONS);
+        const url = buildTMDBUrl(`/movie/${movieId}/videos`, { language: 'en-US' });
+        const data = await fetchThroughProxy(url);
         const result = await data.json();
         // console.log(result.results);
 
@@ -32,15 +33,15 @@ const getMovieVideos = async (movieId, selectedCategory, setTrailerId) => {
     try {
         let apiUrl;
         if (selectedCategory === "movie") {
-            apiUrl = `https://api.themoviedb.org/3/movie/${movieId}/videos?language=en-US`;
+            apiUrl = buildTMDBUrl(`/movie/${movieId}/videos`, { language: 'en-US' });
         } else if (selectedCategory === "tv") {
-            apiUrl = `https://api.themoviedb.org/3/tv/${movieId}/videos?language=en-US`;
+            apiUrl = buildTMDBUrl(`/tv/${movieId}/videos`, { language: 'en-US' });
         } else {
             console.error('Invalid media type. Use "movie" or "tv".');
             return;
         }
 
-        const data = await fetch(apiUrl, API_OPTIONS);
+        const data = await fetchThroughProxy(apiUrl);
         const result = await data.json();
         // console.log(result.results);
 

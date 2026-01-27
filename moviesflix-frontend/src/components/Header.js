@@ -10,6 +10,8 @@ import { auth } from '../utils/firebase';
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { removeUser, addUser } from '../utils/userSlice';
 import { lang } from '../utils/constants';
+import HeaderSkeleton from './HeaderSkeleton';
+import { clearWatchlist } from '../utils/movieSlice';
 
 const Header = () => {
   const navigate = useNavigate();
@@ -37,6 +39,7 @@ const Header = () => {
   const handleSignOut = () => {
     signOut(auth).then(() => {
       // Sign-out successful.
+      dispatch(clearWatchlist());
     }).catch((error) => {
       navigate("/error");
     });
@@ -78,6 +81,10 @@ const Header = () => {
     }
   };
 
+  if (user === null) {
+    return <HeaderSkeleton />;
+  }
+  
   return (
     <div className='absolute w-screen px-8 py-2 bg-gradient-to-b from-black z-10 flex flex-row justify-between items-center '>
       {(!showGptSearch && !showAiSearch) && (

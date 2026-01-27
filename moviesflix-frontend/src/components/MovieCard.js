@@ -10,6 +10,7 @@ import { getCastData } from '../utils/castUtils';
 import { auth } from '../utils/firebase';
 import { handleAddToWatchlist, handleRemoveFromWatchlist } from '../utils/watchlistUtils';
 import './loginStyle.css'
+import { buildTMDBUrl, fetchThroughProxy } from '../utils/tmdbProxy';
 
 const MovieCard = ({ posterPath, altText, movie, selectedCategory, isMobileView, isAdded, mediaType }) => {
 
@@ -27,24 +28,22 @@ const MovieCard = ({ posterPath, altText, movie, selectedCategory, isMobileView,
     const mediaTypeOrCategory = mediaType || selectedCategory; // Use mediaType if available, otherwise use selectedCategory
 
 
-    useEffect(() => {
-        const fetchGenres = async () => {
-            try {
-                let allGenres = {};
-                const response = await fetch(`https://api.themoviedb.org/3/genre/${mediaTypeOrCategory}/list?api_key=${API_KEY}`);
-                if (!response.ok) {
-                    throw new Error(`Failed to fetch genres for ${mediaType ? mediaType : selectedCategory}`);
-                }
-                const data = await response.json();
-                const { genres } = data;
-                genres.forEach((item) => (allGenres[item.id] = item));
-                dispatch(getGenres(allGenres));
-            } catch (error) {
-                console.error('Error fetching genres:', error);
-            }
-        };
-        fetchGenres();
-    }, [dispatch, mediaType, selectedCategory]);
+    // useEffect(() => {
+    //     const fetchGenres = async () => {
+    //         try {
+    //             let allGenres = {};
+    //             const url = buildTMDBUrl(`/genre/${mediaTypeOrCategory}/list`);
+    //             const response = await fetchThroughProxy(url);
+    //             const json = await response.json();
+    //             const { genres } = json;
+    //             genres.forEach((item) => (allGenres[item.id] = item));
+    //             dispatch(getGenres(allGenres));
+    //         } catch (error) {
+    //             console.error('Error fetching genres:', error);
+    //         }
+    //     };
+    //     fetchGenres();
+    // }, [dispatch, mediaType, selectedCategory]);
 
     useEffect(() => {
         if (isHovered) {

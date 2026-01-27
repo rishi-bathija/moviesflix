@@ -19,3 +19,4 @@ export const lang = [
 ]
 
 export const gpt_api = process.env.REACT_APP_GPT_API;
+export const CLOUDFLARE_PROXY_URL = process.env.REACT_APP_CLOUDFLARE_PROXY_URL;

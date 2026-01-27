@@ -13,11 +13,13 @@ import useUpcomingMovies from '../hooks/useUpcomingMovies'
 import useHorrorMovies from '../hooks/useHorrorMovies'
 import GptSearch from './GptSearch'
 import Chat from './Chat'
+import useGenres from '../hooks/useGenres'
 
 const Browse = () => {
   useNowPlayingMovies();
   useUpcomingMovies();
   useHorrorMovies();
+  useGenres();
 
   const showGptSearch = useSelector(store => store.gpt.showGptSearch);
   const showAiSearch = useSelector(store => store.gpt.showAiSearch);

@@ -2,19 +2,22 @@ import { useDispatch } from "react-redux";
 import { addTopRatedMovies } from "../utils/movieSlice";
 import { useEffect } from "react";
 import { API_OPTIONS } from "../utils/constants";
+import { buildTMDBUrl, fetchThroughProxy } from "../utils/tmdbProxy";
 
-const useTopRatedMovies = (selectedCategory) => {
+const useTopRatedMovies = (listTitle, myTitle, selectedCategory) => {
     const dispatch = useDispatch();
 
     const getTopRatedMovies = async () => {
-        const data = await fetch(`https://api.themoviedb.org/3/${selectedCategory}/top_rated?language=en-US&page=1`, API_OPTIONS);
-        const result = await data.json();
-        dispatch(addTopRatedMovies(result.results));
+        const url = buildTMDBUrl(`/${selectedCategory}/top_rated`, { language: 'en-US', page: 1 });
+        const data = await fetchThroughProxy(url);
+        const json = await data.json();
+        dispatch(addTopRatedMovies(json.results));
     };
 
     useEffect(() => {
+        if (listTitle !== myTitle) return;
         getTopRatedMovies();
-    }, [selectedCategory]);
+    }, [selectedCategory, listTitle, myTitle]);
 
     // return { selectedCategory };
 };
