@@ -5,6 +5,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { addGptMovieResult, setGptMovieResult, setIsLoading, setLoading } from '../utils/searchSlice';
 import MovieSuggestions from './MovieSuggestions';
 import Spinner from './Spinner';
+import { buildTMDBUrl, fetchThroughProxy } from '../utils/tmdbProxy';
+
 const Chat = () => {
     // const [answer, setAnswer] = useState(null);
     const [selectedQuestion, setSelectedQuestion] = useState(""); // Store the predefined question part
@@ -29,8 +31,10 @@ const Chat = () => {
 
     const searchMovie = async (movie) => {
         try {
-            const response = await axios.get(`https://api.themoviedb.org/3/search/multi?query=${movie}&api_key=${process.env.REACT_APP_API_KEY}`)
-            return response.data.results;
+            const url = buildTMDBUrl('/search/multi', { query: movie });
+            const response = await fetchThroughProxy(url);
+            const data = await response.json();
+            return data.results;
         } catch (error) {
             console.error(`Error fetching data for ${movie}:`, error);
             return [];
@@ -54,7 +58,7 @@ const Chat = () => {
                 // Prepare the request body
                 const requestBody = JSON.stringify({ question: finalQuestion });
 
-                const response = await fetch("https://moviesflix-xi.vercel.app/api/user/generate-chat-response", {
+                const response = await fetch("http://localhost:4000/api/user/generate-chat-response", {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

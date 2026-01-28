@@ -1,5 +1,18 @@
 const User = require("../models/User");
 const axios = require("axios")
+
+const fetchThroughProxy = async (url, params = {}) => {
+    const CLOUDFLARE_PROXY_URL = process.env.CLOUDFLARE_PROXY_URL || 'https://your-worker-name.your-subdomain.workers.dev';
+    const urlObj = new URL(url);
+    Object.keys(params).forEach(key => {
+        urlObj.searchParams.append(key, params[key]);
+    });
+    const encodedUrl = encodeURIComponent(urlObj.toString());
+    const proxyUrl = `${CLOUDFLARE_PROXY_URL}?url=${encodedUrl}`;
+
+    return axios.get(proxyUrl);
+};
+
 module.exports.addToWatchListMovies = async (req, res) => {
     try {
         const { movieId, data } = req.body;
@@ -80,24 +93,24 @@ module.exports.generateChat = async (req, res) => {
     try {
         if (question.includes("newly release")) {
             // newly released movies
-            const tmdbMoviesResponse = await axios.get(`https://api.themoviedb.org/3/movie/now_playing`, {
-                params: {
+            const tmdbMoviesResponse = await fetchThroughProxy(
+                'https://api.themoviedb.org/3/movie/now_playing',
+                {
                     api_key: process.env.REACT_APP_API_KEY,
                     language: 'en-US',
-                    // region: country,
                     page: 1
                 }
-            });
+            );
 
             // newly released tv shows
-            const tmdbTvResponse = await axios.get(`https://api.themoviedb.org/3/tv/airing_today`, {
-                params: {
+            const tmdbTvResponse = await fetchThroughProxy(
+                'https://api.themoviedb.org/3/tv/airing_today',
+                {
                     api_key: process.env.REACT_APP_API_KEY,
                     language: 'en-US',
-                    // region: country,
                     page: 1
                 }
-            });
+            );
 
             const movies = tmdbMoviesResponse.data.results.slice(0, 5).map(movie => movie.title);
             const tvShows = tmdbTvResponse.data.results.slice(0, 5).map(tvShow => tvShow.name);
@@ -110,9 +123,8 @@ module.exports.generateChat = async (req, res) => {
         }
         else {
 
-
             const response = await axios.post(
-                `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${process.env.GEMINI_API_KEY}`,
+                `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
                 {
                     "contents": [
                         {

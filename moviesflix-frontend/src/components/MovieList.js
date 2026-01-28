@@ -5,9 +5,12 @@ import axios from '../utils/axios';
 import { API_KEY } from '../utils/constants';
 import { faArrowCircleLeft, faArrowCircleRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { buildTMDBUrl, fetchThroughProxy } from '../utils/tmdbProxy';
+import MovieListSkeleton from './MovieListSkeleton';
 
 const MovieList = ({ title, isLargeRow, fetchUrlMovies, fetchUrlTV, isTrending }) => {
     const [moviesList, setMoviesList] = useState([]);
+    const [loading, setLoading] = useState(true);
     const [selectedCategory, setSelectedCategory] = useState('movie');
     const [selectedTimePeriod, setSelectedTimePeriod] = useState('day');
     const [selectedTrendingCategory, setSelectedTrendingCategory] = useState('movie');
@@ -24,28 +27,32 @@ const MovieList = ({ title, isLargeRow, fetchUrlMovies, fetchUrlTV, isTrending }
     useEffect(() => {
         async function fetchData() {
             try {
+                setLoading(true);
                 let currentFetchUrl;
                 if (isTrending) {
-                    currentFetchUrl = selectedTrendingCategory === 'movie'
-                        ? `/trending/movie/${selectedTimePeriod}?api_key=${API_KEY}&language=en-US`
-                        : `/trending/tv/${selectedTimePeriod}?api_key=${API_KEY}&language=en-US`;
+                    const endpoint = selectedTrendingCategory === 'movie'
+                    ? `/trending/movie/${selectedTimePeriod}`
+                    : `/trending/tv/${selectedTimePeriod}`;
+                currentFetchUrl = buildTMDBUrl(endpoint, { language: 'en-US' });
                 } else {
-                    currentFetchUrl = selectedCategory === 'movie'
-                        ? fetchUrlMovies
-                        : fetchUrlTV;
+                    const baseUrl = selectedCategory === 'movie' ? fetchUrlMovies : fetchUrlTV;
+                    // Extract endpoint and params from the baseUrl
+                    const urlObj = new URL(baseUrl, 'https://api.themoviedb.org');
+                    currentFetchUrl = buildTMDBUrl(urlObj.pathname, Object.fromEntries(urlObj.searchParams));
                 }
 
-                const request = await axios.get(currentFetchUrl);
-                setMoviesList(request.data.results);
-                return request;
+                const request = await fetchThroughProxy(currentFetchUrl);
+                const json = await request.json();
+                setMoviesList(json.results);
+                setLoading(false);
             } catch (error) {
                 console.error("Error fetching data:", error);
+                setLoading(false);
             }
-        }
+        };
 
         fetchData();
     }, [selectedCategory, selectedTrendingCategory, selectedTimePeriod, isTrending, fetchUrlMovies, fetchUrlTV]);
-
     const handleCategoryChange = (category) => {
         setSelectedCategory(category);
     };
@@ -86,6 +93,10 @@ const MovieList = ({ title, isLargeRow, fetchUrlMovies, fetchUrlTV, isTrending }
             window.removeEventListener('resize', handleResize);
         };
     }, []);
+
+    if(loading || !moviesList || moviesList.length === 0) {
+        return <MovieListSkeleton title={title} isLargeRow={isLargeRow} />;
+    }
 
     return (
         <div className='p-4 sm:p-6 my-6 sm:my-8'>

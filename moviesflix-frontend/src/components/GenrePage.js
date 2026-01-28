@@ -7,6 +7,7 @@ import dayjs from 'dayjs';
 import noposter from './no-poster.png';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import Spinner from './Spinner';
+import { buildTMDBUrl, fetchThroughProxy } from '../utils/tmdbProxy';
 
 const GenrePage = () => {
     const { genreId, genreName } = useParams();
@@ -20,18 +21,21 @@ const GenrePage = () => {
     const navigate = useNavigate();
     const fetchMoviesByGenre = async (resetPage = false) => {
         try {
-            const response = await axios.get(
-                `https://api.themoviedb.org/3/discover/${type}?api_key=${API_KEY}&with_genres=${genreId}&page=${resetPage ? 1 : page}`
-            );
+            const url = buildTMDBUrl(`/discover/${type}`, { 
+                with_genres: genreId, 
+                page: resetPage ? 1 : page 
+            });
+            const response = await fetchThroughProxy(url);
+            const json = await response.json();
             if (resetPage) {
-                setMovies(response.data.results);
+                setMovies(json.results);
                 setPage(2);
             }
             else {
-                setMovies(prevResults => [...prevResults, ...response.data.results]);
+                setMovies(prevResults => [...prevResults, ...json.results]);
                 setPage(prevPage => prevPage + 1);
             }
-            setHasMore(response.data.page < response.data.total_pages);
+            setHasMore(json.page < json.total_pages);
         } catch (error) {
             setError('Failed to fetch movies.');
         } finally {

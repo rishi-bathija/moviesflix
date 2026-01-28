@@ -70,9 +70,12 @@ const movieSlice = createSlice({
         },
         removeFromWatchlist: (state, action) => {
             state.watchlist = state.watchlist.filter(movie => movie.id !== action.payload); // Remove a movie from the watchlist
-        }
+        },
+        clearWatchlist: (state) => {
+            state.watchlist = [];
+        },
     }
 })
 
-export const { addNowPlayingMovies, addTrailerVideo, addMovieVideo, addPopularMovies, addNetflixOrgMovies, addTopRatedMovies, addUpcomingMovies, addHorrorMovies, getGenres, addCast, setIsMovieTrailer, setSelectedVideoId, setWatchlist, addToWatchlist, removeFromWatchlist } = movieSlice.actions;
+export const { addNowPlayingMovies, addTrailerVideo, addMovieVideo, addPopularMovies, addNetflixOrgMovies, addTopRatedMovies, addUpcomingMovies, addHorrorMovies, getGenres, addCast, setIsMovieTrailer, setSelectedVideoId, setWatchlist, addToWatchlist, removeFromWatchlist, clearWatchlist } = movieSlice.actions;
 export default movieSlice.reducer;

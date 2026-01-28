@@ -1,9 +1,11 @@
 // src/utils/movieUtils.js
 import { API_KEY } from './constants';
+import { buildTMDBUrl, fetchThroughProxy } from './tmdbProxy';
 
 export const VideoData = async (movieId, category) => {
     try {
-        const response = await fetch(`https://api.themoviedb.org/3/${category}/${movieId}/videos?api_key=${API_KEY}`);
+        const url = buildTMDBUrl(`/${category}/${movieId}/videos`);
+        const response = await fetchThroughProxy(url);
         if (!response.ok) {
             throw new Error(`Failed to fetch videos for ${category} ID ${movieId}`);
         }

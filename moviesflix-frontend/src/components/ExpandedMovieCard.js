@@ -10,6 +10,7 @@ import './loginStyle.css';
 import { useNavigate } from 'react-router-dom';
 import { handleAddToWatchlist, handleRemoveFromWatchlist } from '../utils/watchlistUtils';
 import { auth } from '../utils/firebase';
+import { buildTMDBUrl, fetchThroughProxy } from '../utils/tmdbProxy';
 
 const ExpandedMovieCard = ({ movie, backdropPath, selectedCategory, isMobileView }) => {
     const navigate = useNavigate();
@@ -19,32 +20,32 @@ const ExpandedMovieCard = ({ movie, backdropPath, selectedCategory, isMobileView
     const watchlist = useSelector((state) => state.movies.watchlist);
     const isInWatchlist = watchlist.some((item) => item.id === movie.id);
 
-    const genresCall = async () => {
-        try {
-            const endPoints = ["tv", "movie"];
-            let allGenres = {};
+    // const genresCall = async () => {
+    //     try {
+    //         const endPoints = ["tv", "movie"];
+    //         let allGenres = {};
 
-            for (const url of endPoints) {
-                const response = await fetch(`https://api.themoviedb.org/3/genre/${url}/list?api_key=${API_KEY}`);
+    //         for (const type of endPoints) {
+    //             // const url = buildTMDBUrl(`/genre/${type}/list`, { api_key: API_KEY });
+    //             const url = buildTMDBUrl(`/genre/${type}/list`);
 
-                if (!response.ok) {
-                    throw new Error(`Failed to fetch genres for ${url}`);
-                }
-                const data = await response.json();
-                const { genres } = data;
+    //             const response = await fetchThroughProxy(url);
+    //             const json = await response.json();
 
-                genres.forEach((item) => (allGenres[item.id] = item));
-            }
+    //             const { genres } = json;
 
-            dispatch(getGenres(allGenres));
-        } catch (error) {
-            console.error('Error fetching genres:', error);
-        }
-    };
+    //             genres.forEach((item) => (allGenres[item.id] = item));
+    //         }
 
-    useEffect(() => {
-        genresCall();
-    }, []);
+    //         dispatch(getGenres(allGenres));
+    //     } catch (error) {
+    //         console.error('Error fetching genres:', error);
+    //     }
+    // };
+
+    // useEffect(() => {
+    //     genresCall();
+    // }, []);
 
     const handleMovieHover = () => {
         if (!isMobile()) {

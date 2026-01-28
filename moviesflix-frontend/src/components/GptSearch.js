@@ -7,7 +7,8 @@ import { useNavigate } from 'react-router-dom';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import language from '../utils/langConst';
 import Spinner from './Spinner'; // Import the Spinner component
-
+import { buildTMDBUrl, fetchThroughProxy } from '../utils/tmdbProxy';
+        
 const GptSearch = memo(() => {
     const langVal = useSelector((store) => store.config.lang);
     const searchText = useRef(null);
@@ -22,19 +23,22 @@ const GptSearch = memo(() => {
         if (!query) return;
 
         try {
-            const response = await axios.get(
-                `https://api.themoviedb.org/3/search/${searchType}?query=${query}&api_key=${API_KEY}&page=${resetPage ? 1 : page}`
-            );
+            const url = buildTMDBUrl(`/search/${searchType}`, { 
+                query, 
+                page: resetPage ? 1 : page 
+            });
+            const response = await fetchThroughProxy(url);
+            const json = await response.json();
 
             if (resetPage) {
-                setSearchResults(response.data.results);
+                setSearchResults(json.results);
                 setPage(2);
             } else {
-                setSearchResults(prevResults => [...prevResults, ...response.data.results]);
+                setSearchResults(prevResults => [...prevResults, ...json.results]);
                 setPage(prevPage => prevPage + 1);
             }
 
-            setHasMore(response.data.page < response.data.total_pages);
+            setHasMore(json.page < json.total_pages);
         } catch (error) {
             console.error('Error fetching search results:', error);
         }
