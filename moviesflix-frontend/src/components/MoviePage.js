@@ -15,6 +15,8 @@ import { VideoData } from '../utils/videoUtils';
 import { auth } from '../utils/firebase';
 import { handleAddToWatchlist, handleRemoveFromWatchlist } from '../utils/watchlistUtils';
 import { buildTMDBUrl, fetchThroughProxy } from '../utils/tmdbProxy';
+import Spinner from './Spinner';
+import { handleDislikeMovie, handleLikeMovie, handleRemoveDislike, handleRemoveLike } from '../utils/likeDislikeUtils';
 
 
 const MoviePage = () => {
@@ -34,7 +36,11 @@ const MoviePage = () => {
     const [activeSeason, setActiveSeason] = useState(1);
     const [watchProviders, setWatchProviders] = useState([]);
     const location = useLocation();
+
     const watchlist = useSelector((state) => state.movies.watchlist);
+    const likedMovies = useSelector((state) => state.likeDislike.likedMovies);
+    const dislikedMovies = useSelector((state) => state.likeDislike.dislikedMovies);
+
     const type = new URLSearchParams(location.search).get('type') || 'movie';
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -42,11 +48,11 @@ const MoviePage = () => {
     useEffect(() => {
         const fetchMovieDetails = async () => {
             try {
-                      // Fetch movie details
-            const movieUrl = buildTMDBUrl(`/${type}/${id}`);
-            const movieResponse = await fetchThroughProxy(movieUrl);
-            const movieData = await movieResponse.json();
-            setMovieDetails(movieData);
+                // Fetch movie details
+                const movieUrl = buildTMDBUrl(`/${type}/${id}`);
+                const movieResponse = await fetchThroughProxy(movieUrl);
+                const movieData = await movieResponse.json();
+                setMovieDetails(movieData);
                 // Fetch season details if type is tv
                 if (type === 'tv') {
                     const seasons = movieData.seasons.filter(season => season.season_number !== 0);
@@ -123,11 +129,19 @@ const MoviePage = () => {
     }
 
     if (loading) {
-        return <div className='text-white'>Loading...</div>;
+        return (
+            <div className="min-h-screen bg-black flex items-center justify-center">
+                <Spinner />
+            </div>
+        );
     }
 
     if (error) {
-        return <div>{error}</div>;
+        return (
+            <div className="min-h-screen bg-black flex items-center justify-center text-red-500">
+                {error}
+            </div>
+        );
     }
 
     const formatRuntime = (minutes) => {
@@ -179,6 +193,24 @@ const MoviePage = () => {
     const handleRemoveFromWatchlistClick = () => {
         handleRemoveFromWatchlist(auth, movieDetails, dispatch);
     };
+
+    const onLikeClick = () => {
+        // Implement like functionality
+        handleLikeMovie(auth, movieDetails, type, dispatch);
+    }
+
+    const onDislikeClick = () => {
+        // Implement dislike functionality
+        handleDislikeMovie(auth, movieDetails, type, dispatch);
+    }
+
+    const onRemoveLikeClick = () => {
+        handleRemoveLike(auth, movieDetails.id, dispatch);
+    }
+
+    const onRemoveDislikeClick = () => {
+        handleRemoveDislike(auth, movieDetails.id, dispatch);
+    }
 
     return (
         <>
@@ -259,12 +291,28 @@ const MoviePage = () => {
                                         <FontAwesomeIcon icon={faPlus} /> <span className="hidden sm:inline">Add to watchlist</span>
                                     </button>)
                                 }
-                                <button className='border-2 border-white rounded-lg flex items-center justify-center px-4 py-2 gap-1 sm:gap-2 md:gap-3 lg:gap-4 hover:bg-white hover:text-black hover:border-black transition duration-300 ease-in-out cursor-pointer'>
+                                {likedMovies.some(item => item.id === movieDetails.id) ?
+                                    (<button className='border-2 border-white rounded-lg flex items-center justify-center px-4 py-2 gap-1 sm:gap-2 md:gap-3 lg:gap-4 hover:bg-white hover:text-black hover:border-black transition duration-300 ease-in-out cursor-pointer' onClick={onRemoveLikeClick} >
+                                        <FontAwesomeIcon icon={faThumbsUp} /> <span className="hidden sm:inline">Liked</span>
+                                    </button>)
+                                    : (<button className='border-2 border-white rounded-lg flex items-center justify-center px-4 py-2 gap-1 sm:gap-2 md:gap-3 lg:gap-4 hover:bg-white hover:text-black hover:border-black transition duration-300 ease-in-out cursor-pointer' onClick={onLikeClick} >
+                                        <FontAwesomeIcon icon={faThumbsUp} /> <span className="hidden sm:inline">Like</span>
+                                    </button>)
+                                }
+                                {dislikedMovies.some(item => item.id === movieDetails.id) ?
+                                    (<button className='border-2 border-white rounded-lg flex items-center justify-center px-4 py-2 gap-1 sm:gap-2 md:gap-3 lg:gap-4 hover:bg-white hover:text-black hover:border-black transition duration-300 ease-in-out cursor-pointer' onClick={onRemoveDislikeClick} >
+                                        <FontAwesomeIcon icon={faThumbsDown} /> <span className="hidden sm:inline">Not for me</span>
+                                    </button>)
+                                    : (<button className='border-2 border-white rounded-lg flex items-center justify-center px-4 py-2 gap-1 sm:gap-2 md:gap-3 lg:gap-4 hover:bg-white hover:text-black hover:border-black transition duration-300 ease-in-out cursor-pointer' onClick={onDislikeClick} >
+                                        <FontAwesomeIcon icon={faThumbsDown} /> <span className="hidden sm:inline">Not for me</span>
+                                    </button>)
+                                }
+                                {/* <button className='border-2 border-white rounded-lg flex items-center justify-center px-4 py-2 gap-1 sm:gap-2 md:gap-3 lg:gap-4 hover:bg-white hover:text-black hover:border-black transition duration-300 ease-in-out cursor-pointer'>
                                     <FontAwesomeIcon icon={faThumbsUp} /> <span className="hidden sm:inline">Like</span>
-                                </button>
-                                <button className='border-2 border-white rounded-lg flex items-center justify-center px-4 py-2 gap-1 sm:gap-2 md:gap-3 lg:gap-4 hover:bg-white hover:text-black hover:border-black transition duration-300 ease-in-out cursor-pointer'>
+                                </button> */}
+                                {/* <button className='border-2 border-white rounded-lg flex items-center justify-center px-4 py-2 gap-1 sm:gap-2 md:gap-3 lg:gap-4 hover:bg-white hover:text-black hover:border-black transition duration-300 ease-in-out cursor-pointer'>
                                     <FontAwesomeIcon icon={faThumbsDown} /> <span className="hidden sm:inline">Not for me</span>
-                                </button>
+                                </button> */}
                             </div>
 
                         </div>

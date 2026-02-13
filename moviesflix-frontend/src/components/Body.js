@@ -16,6 +16,9 @@ import { fetchWatchlist } from '../utils/watchlistUtils'
 import { auth } from '../utils/firebase'
 import { useDispatch } from 'react-redux'
 import Chat from './Chat'
+import SavedSearches from './SavedSearches'
+import EntertainmentNews from './EntertainmentNews'
+import { fetchDislikedMovies, fetchLikedMovies } from '../utils/likeDislikeUtils'
 
 
 
@@ -46,7 +49,9 @@ const Body = () => {
         // Check the authentication state before fetching the watchlist
         const unsubscribe = auth.onAuthStateChanged((user) => {
             if (user) {
-                fetchWatchlist(auth, dispatch); // Ensure to pass auth and dispatch
+                fetchWatchlist(auth, dispatch); 
+                fetchLikedMovies(auth, dispatch); 
+                fetchDislikedMovies(auth, dispatch);
             } else {
                 console.error('User not authenticated');
                 // If you have a loading state or other actions to handle the unauthenticated state, manage them here
@@ -70,6 +75,8 @@ const Body = () => {
                         <Route path="/genre/:genreId/:genreName" element={<GenrePage />} />
                         <Route exact path="/mylist" element={<UserMovies />} />
                         <Route exact path='/chat' element={<Chat />} />
+                        <Route exact path='/saved-searches' element={<SavedSearches/>}/>
+                        <Route exact path='/news' element={<EntertainmentNews/>}/> 
                     </Routes>
                 </div>
             </Router>

@@ -48,7 +48,11 @@ const GenrePage = () => {
     }, [genreId, type]);
 
     if (loading) {
-        return <div className='text-white'>Loading...</div>;
+        return (
+            <div className="min-h-screen bg-black flex items-center justify-center">
+                <Spinner />  {/* or any text/loader you like */}
+            </div>
+        );
     }
 
     if (error) {

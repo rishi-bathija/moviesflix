@@ -11,6 +11,7 @@ import { auth } from '../utils/firebase';
 import { handleAddToWatchlist, handleRemoveFromWatchlist } from '../utils/watchlistUtils';
 import './loginStyle.css'
 import { buildTMDBUrl, fetchThroughProxy } from '../utils/tmdbProxy';
+import { handleDislikeMovie, handleLikeMovie, handleRemoveDislike, handleRemoveLike } from '../utils/likeDislikeUtils';
 
 const MovieCard = ({ posterPath, altText, movie, selectedCategory, isMobileView, isAdded, mediaType }) => {
 
@@ -23,7 +24,12 @@ const MovieCard = ({ posterPath, altText, movie, selectedCategory, isMobileView,
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const watchlist = useSelector((state) => state.movies.watchlist);
+    const likedMovies = useSelector((state) => state.likeDislike.likedMovies);
+    const dislikedMovies = useSelector((state) => state.likeDislike.dislikedMovies);
+
     const isInWatchlist = watchlist.some((item) => item.id === movie.id);
+    const isLikedMovie = likedMovies.some((item) => item.id === movie.id);
+    const isDislikedMovie = dislikedMovies.some((item) => item.id === movie.id);
 
     const mediaTypeOrCategory = mediaType || selectedCategory; // Use mediaType if available, otherwise use selectedCategory
 
@@ -79,6 +85,24 @@ const MovieCard = ({ posterPath, altText, movie, selectedCategory, isMobileView,
         handleRemoveFromWatchlist(auth, movie, dispatch);
     };
 
+    const onLikeClick = () => {
+        // Implement like functionality
+        handleLikeMovie(auth, movie, selectedCategory, dispatch);
+    }
+
+    const onDislikeClick = () => {
+        // Implement dislike functionality
+        handleDislikeMovie(auth, movie, selectedCategory, dispatch);
+    }
+    
+    const onRemoveLikeClick = () => {
+        handleRemoveLike(auth, movie.id, dispatch);
+    }
+
+    const onRemoveDislikeClick = () => {
+        handleRemoveDislike(auth, movie.id, dispatch);
+    }
+
     const { genres } = useSelector((state) => state.movies);
     const _genres = movie?.genre_ids;
 
@@ -111,8 +135,17 @@ const MovieCard = ({ posterPath, altText, movie, selectedCategory, isMobileView,
                     <div className="icons flex justify-between">
                         <div className="controls flex">
                             <FontAwesomeIcon icon={faPlay} title='play' onClick={handlePlayClick} />
-                            <FontAwesomeIcon icon={faThumbsUp} title='like' />
-                            <FontAwesomeIcon icon={faThumbsDown} title='dislike' />
+                            {/* <FontAwesomeIcon icon={faThumbsUp} title='like' /> */}
+                            {isLikedMovie ? (
+                                <FontAwesomeIcon icon={faThumbsUp} title='Remove Like' onClick={onRemoveLikeClick} className='text-red-500'/>
+                            ) : (
+                                <FontAwesomeIcon icon={faThumbsUp} title='like' onClick={onLikeClick} />
+                            )}
+                            {isDislikedMovie ? (
+                                <FontAwesomeIcon icon={faThumbsDown} title='Remove Dislike' onClick={onRemoveDislikeClick} className='text-red-500'/>
+                            ) : (
+                                <FontAwesomeIcon icon={faThumbsDown} title='dislike' onClick={onDislikeClick} />
+                            )}
                             <Link to={`/${movie.id}?type=${mediaType ? mediaType : selectedCategory}`}>
                                 <FontAwesomeIcon icon={faCircleInfo} title='More Info' />
                             </Link>

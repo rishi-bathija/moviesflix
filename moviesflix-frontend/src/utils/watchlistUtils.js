@@ -1,15 +1,14 @@
 import toast from "react-hot-toast";
 import { addToWatchlist, removeFromWatchlist, setWatchlist } from "./movieSlice";
 
-
-
+const API_BASE_URL = process.env.REACT_APP_CLIENT_URL || 'http://localhost:3000';
 export const handleAddToWatchlist = async (auth, movie, selectedCategory, dispatch) => {
     const loadingToastId = toast.loading("Adding to watchlist...");
     try {
         const user = auth.currentUser;
         if (user) {
             const idToken = await user.getIdToken();
-            const response = await fetch('https://moviesflix-xi.vercel.app/api/user/add', {
+            const response = await fetch(`${API_BASE_URL}/api/user/add`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -44,7 +43,7 @@ export const handleRemoveFromWatchlist = async (auth, movie, dispatch) => {
         const user = auth.currentUser;
         if (user) {
             const idToken = await user.getIdToken();
-            const response = await fetch('https://moviesflix-xi.vercel.app/api/user/remove', {
+            const response = await fetch(`${API_BASE_URL}/api/user/remove`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -82,7 +81,7 @@ export const fetchWatchlist = async (auth, dispatch, setLoading) => {
             const idToken = await user.getIdToken();
             // console.log('idtoken', idToken);
 
-            const response = await fetch('https://moviesflix-xi.vercel.app/api/user/watchlist', {
+            const response = await fetch(`${API_BASE_URL}/api/user/watchlist`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -101,10 +100,10 @@ export const fetchWatchlist = async (auth, dispatch, setLoading) => {
             } else {
                 if (response.status === 400) {
                     dispatch(setWatchlist([]));
-                  } else {
-                toast.error("Failed to fetch watchlist");
-                console.error('Failed to fetch watchlist, status:', response.status);
-                  }
+                } else {
+                    toast.error("Failed to fetch watchlist");
+                    console.error('Failed to fetch watchlist, status:', response.status);
+                }
             }
         } else {
             dispatch(setWatchlist([]));
