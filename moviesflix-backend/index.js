@@ -5,19 +5,22 @@ const { dbConnect } = require('./config/db');
 const port = process.env.PORT || 4001;
 const cors = require('cors');
 const userRoutes = require("./routes/userRoutes");
+const newsRoutes = require("./routes/newsRoutes"); 
 
 dbConnect();
 
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 app.use(cors({
     origin: ["http://localhost:3000", "https://moviesflix-ui.vercel.app"],
-    methods: ["POST", "GET", "PUT", "OPTIONS"],
+    methods: ["POST", "GET", "PUT", "DELETE", "OPTIONS"],
     credentials: true
 }));
 
 
 app.use('/api/user', userRoutes);
+app.use('/api/news', newsRoutes);
 
 app.get('/', (req, res) => {
     return res.json({

@@ -2,10 +2,13 @@ import React, { useState } from 'react';
 import { auth } from '../utils/firebase';
 import axios from 'axios'
 import { useDispatch, useSelector } from 'react-redux';
-import { addGptMovieResult, setGptMovieResult, setIsLoading, setLoading } from '../utils/searchSlice';
+import { addGptMovieResult, setGptMovieResult, setIsLoading, setLoading, clearGptMovieResult } from '../utils/searchSlice';
 import MovieSuggestions from './MovieSuggestions';
 import Spinner from './Spinner';
 import { buildTMDBUrl, fetchThroughProxy } from '../utils/tmdbProxy';
+import { saveAiSearch } from '../utils/savedSearchUtils';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSave } from '@fortawesome/free-solid-svg-icons';
 
 const Chat = () => {
     // const [answer, setAnswer] = useState(null);
@@ -13,8 +16,11 @@ const Chat = () => {
     const [userInput, setUserInput] = useState(""); // Store the additional user input
     // const [countryInput, setCountryInput] = useState(""); // Store the user-specified country
     // const [isLoading, setIsLoading] = useState(false);
+    const [showSaveButton, setShowSaveButton] = useState(false);
+    const API_BASE_URL = process.env.REACT_APP_CLIENT_URL;
+
     const dispatch = useDispatch();
-    const { answer, isLoading } = useSelector((state) => state.gpt);
+    const { answer, isLoading, movieNames, movieResults, currentSearchId } = useSelector((state) => state.gpt);
     const predefinedQuestions = [
         "Suggest me some",
         "Movies and tv shows similar to",
@@ -27,6 +33,8 @@ const Chat = () => {
     const handleQuestionSelect = (predefined) => {
         setSelectedQuestion(predefined); // Set the selected question part
         setUserInput(""); // Reset any previous user input
+        setShowSaveButton(false);
+        dispatch(clearGptMovieResult())
     };
 
     const searchMovie = async (movie) => {
@@ -44,6 +52,7 @@ const Chat = () => {
     const generateResponse = async () => {
         dispatch(setIsLoading(true));
         dispatch(setGptMovieResult("Loading..."));
+        setShowSaveButton(false);
 
         try {
             const user = auth.currentUser;
@@ -58,7 +67,7 @@ const Chat = () => {
                 // Prepare the request body
                 const requestBody = JSON.stringify({ question: finalQuestion });
 
-                const response = await fetch("https://moviesflix-xi.vercel.app/api/user/generate-chat-response", {
+                const response = await fetch(`${API_BASE_URL}/api/user/generate-chat-response`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -79,19 +88,10 @@ const Chat = () => {
                     movieList = responseData.candidates[0].content.parts[0].text.split(", ");
                 }
 
-                // Make API calls for each movie in the list
-                const individResp = movieList.map((movie) => searchMovie(movie));
-
-                const searchResults = await Promise.all(individResp);
-
-                // console.log('searchRes', searchResults);
-
-                dispatch(addGptMovieResult({ movieNames: movieList, gptResults: searchResults }));
-
+                const individualResponses = await Promise.all(movieList.map((movie) => searchMovie(movie)));
+                dispatch(addGptMovieResult({ movieNames: movieList, gptResults: individualResponses }));
                 dispatch(setGptMovieResult(movieList));
-                // console.log('answer', answer);
-
-
+                setShowSaveButton(true);
             }
         } catch (error) {
             dispatch(setGptMovieResult("Something went wrong. Please try again."));
@@ -103,6 +103,22 @@ const Chat = () => {
     };
 
     // console.log('answer', answer);
+
+    const handleSaveSearch = async () => {
+        if (!movieNames || !movieResults) {
+            return;
+        }
+
+        const searchData = {
+            question: selectedQuestion,
+            userInput: userInput,
+            fullQuestion: selectedQuestion + " " + userInput,
+            movieNames: movieNames,
+            movieResults: movieResults
+        };
+
+        await saveAiSearch(auth, searchData, dispatch);
+    };
 
     // Handle Enter key press for triggering the search
     const handleKeyPress = (e) => {
@@ -154,6 +170,7 @@ const Chat = () => {
                             />
                         </div>
 
+                        <div className="flex gap-2">
                         <button
                             className="w-full px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm sm:text-lg rounded-lg transition duration-300 ease-in-out"
                             onClick={generateResponse}
@@ -161,6 +178,20 @@ const Chat = () => {
                         >
                             Generate Answer
                         </button>
+
+                        {showSaveButton && movieNames && (
+                                <button
+                                    className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm sm:text-lg rounded-lg transition duration-300 ease-in-out flex items-center gap-2 flex-shrink-0"
+                                    onClick={handleSaveSearch}
+                                    title="Save this search"
+                                >
+                                    {/* <span>💾</span> */}
+                                    <FontAwesomeIcon icon={faSave} />
+                                    <span className="hidden sm:inline">Save Results</span>
+                                </button>
+                            )}
+
+                        </div>
                     </div>
                 </div>
             )}

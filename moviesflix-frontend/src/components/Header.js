@@ -84,7 +84,7 @@ const Header = () => {
   if (user === null) {
     return <HeaderSkeleton />;
   }
-  
+
   return (
     <div className='absolute w-screen px-8 py-2 bg-gradient-to-b from-black z-10 flex flex-row justify-between items-center '>
       {(!showGptSearch && !showAiSearch) && (
@@ -130,13 +130,27 @@ const Header = () => {
               <FontAwesomeIcon icon={faCaretDown} className='text-white text-lg ml-2' />
 
               {/* Dropdown shown on hover */}
-              <div className='hidden group-hover:block absolute right-0 mt-2 py-2 w-60 top-[50%] translate-y-[20%] bg-red-800 rounded-lg shadow-xl z-20'>
+              <div className='hidden group-hover:block absolute right-0 mt-2 py-2 w-60 top-[40%] translate-y-[20%] bg-red-800 rounded-lg shadow-xl z-20'>
                 <button
                   onClick={() => {
                     navigate('/mylist');
                   }}
                   className="block px-4 py-2 text-white hover:bg-gray-700 w-full text-left">
                   My List
+                </button>
+                <button
+                  onClick={() => {
+                    navigate('/saved-searches');
+                  }}
+                  className="block px-4 py-2 text-white hover:bg-gray-700 w-full text-left">
+                  Saved Searches
+                </button>
+                <button
+                  onClick={() => {
+                    navigate('/news');
+                  }}
+                  className="block px-4 py-2 text-white hover:bg-gray-700 w-full text-left">
+                  Entertainment News
                 </button>
                 <button
                   onClick={handleSignOut}
